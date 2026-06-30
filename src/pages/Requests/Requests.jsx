@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import {
   Box, Paper, Typography, TextField, Button, Select, MenuItem, FormControl,
   InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Chip, Tabs, Tab, Card, CardContent, Grid, Alert, Snackbar, Skeleton
+  Chip, Tabs, Tab, Card, CardContent, Grid, Alert, Skeleton
 } from '@mui/material';
+import { toast } from 'react-toastify';
 import SendIcon from '@mui/icons-material/Send';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useFormik } from 'formik';
@@ -63,14 +64,14 @@ function RequestForm({ type, onSubmit, loading }) {
         <Grid container spacing={2}>
           {type === 'vacation' && (
             <>
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid item xs={12} sm={6}>
                 <TextField fullWidth label="Fecha de Inicio" type="date" name="startDate"
                   value={formik.values.startDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.startDate && Boolean(formik.errors.startDate)}
                   helperText={formik.touched.startDate && formik.errors.startDate}
                   required InputLabelProps={{ shrink: true }} />
               </Grid>
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid item xs={12} sm={6}>
                 <TextField fullWidth label="Fecha de Fin" type="date" name="endDate"
                   value={formik.values.endDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.endDate && Boolean(formik.errors.endDate)}
@@ -81,7 +82,7 @@ function RequestForm({ type, onSubmit, loading }) {
           )}
           {type === 'certificate' && (
             <>
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid item xs={12} sm={6}>
                 <FormControl fullWidth required error={formik.touched.certificateType && Boolean(formik.errors.certificateType)}>
                   <InputLabel>Tipo de Constancia</InputLabel>
                   <Select name="certificateType" value={formik.values.certificateType} onChange={formik.handleChange}
@@ -96,7 +97,7 @@ function RequestForm({ type, onSubmit, loading }) {
                   <Typography variant="caption" color="error">{formik.errors.certificateType}</Typography>
                 )}
               </Grid>
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid item xs={12} sm={6}>
                 <TextField fullWidth label="Fecha Estimada" type="date" name="estimatedDate"
                   value={formik.values.estimatedDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   InputLabelProps={{ shrink: true }} />
@@ -105,7 +106,7 @@ function RequestForm({ type, onSubmit, loading }) {
           )}
           {type === 'voucher' && (
             <>
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid item xs={12} sm={6}>
                 <FormControl fullWidth required error={formik.touched.period && Boolean(formik.errors.period)}>
                   <InputLabel>Periodo</InputLabel>
                   <Select name="period" value={formik.values.period} onChange={formik.handleChange}
@@ -128,7 +129,7 @@ function RequestForm({ type, onSubmit, loading }) {
                   <Typography variant="caption" color="error">{formik.errors.period}</Typography>
                 )}
               </Grid>
-              <Grid item xs={12} sm={6} md={4}>
+              <Grid item xs={12} sm={6}>
                 <TextField fullWidth label="Año" type="number" name="year"
                   value={formik.values.year} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.year && Boolean(formik.errors.year)}
@@ -159,7 +160,6 @@ function Requests() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const loadRequests = () => {
     setLoading(true);
@@ -177,10 +177,10 @@ function Requests() {
       if (type === 'vacation') await createVacation(data);
       else if (type === 'certificate') await createCertificate(data);
       else if (type === 'voucher') await createVoucher(data);
-      setSnackbar({ open: true, message: 'Solicitud creada exitosamente', severity: 'success' });
+      toast.success('Solicitud creada exitosamente');
       loadRequests();
     } catch (err) {
-      setSnackbar({ open: true, message: err.response?.data?.message || 'Error al crear solicitud', severity: 'error' });
+      toast.error(err.response?.data?.message || 'Error al crear solicitud');
     } finally {
       setSubmitting(false);
     }
@@ -189,10 +189,10 @@ function Requests() {
   const handleCancel = async (id) => {
     try {
       await cancelRequest(id);
-      setSnackbar({ open: true, message: 'Solicitud cancelada', severity: 'success' });
+      toast.success('Solicitud cancelada');
       loadRequests();
     } catch (err) {
-      setSnackbar({ open: true, message: err.response?.data?.message || 'Error al cancelar', severity: 'error' });
+      toast.error(err.response?.data?.message || 'Error al cancelar');
     }
   };
 
@@ -285,10 +285,6 @@ function Requests() {
         </Box>
       </Paper>
 
-      <Snackbar open={snackbar.open} autoHideDuration={4000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}>
-        <Alert severity={snackbar.severity} variant="filled" sx={{ width: '100%' }}>{snackbar.message}</Alert>
-      </Snackbar>
     </Box>
   );
 }
