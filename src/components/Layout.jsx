@@ -6,6 +6,8 @@ import {
   ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography,
   Button, Avatar, Menu, MenuItem, Divider
 } from '@mui/material';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PersonIcon from '@mui/icons-material/Person';
@@ -174,6 +176,7 @@ function Layout({ children }) {
         }}
       >
         {children}
+        <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar closeOnClick theme="colored" />
       </Box>
     </Box>
   );
