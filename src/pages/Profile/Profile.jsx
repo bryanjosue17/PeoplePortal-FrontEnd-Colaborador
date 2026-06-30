@@ -80,10 +80,10 @@ function Profile() {
       <Box>
         <Typography variant="h5" fontWeight={600} gutterBottom>Mi Perfil</Typography>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Skeleton variant="rounded" height={300} />
           </Grid>
-        <Grid item xs={12} md={8} sx={{ '& .MuiCard-root': { height: '100%' } }}>
+        <Grid size={{ xs: 12, md: 8 }}>
             <Skeleton variant="rounded" height={300} />
           </Grid>
         </Grid>
@@ -98,7 +98,7 @@ function Profile() {
       <Typography variant="h5" fontWeight={600} gutterBottom>Mi Perfil</Typography>
 
       <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, md: 4 }}>
           <Card sx={{ textAlign: 'center', p: 3 }}>
             <Avatar sx={{ width: 80, height: 80, mx: 'auto', mb: 2, bgcolor: 'primary.main', fontSize: 32 }}>
               {(profile?.firstName?.charAt(0) || 'U').toUpperCase()}
@@ -123,7 +123,7 @@ function Profile() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} md={8}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Card sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
               <Typography variant="h6" fontWeight={600}>Información de Contacto</Typography>
@@ -136,7 +136,7 @@ function Profile() {
 
             <Box component="form" onSubmit={formik.handleSubmit}>
               <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField fullWidth label="Teléfono" name="phone" value={formik.values.phone}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     error={formik.touched.phone && Boolean(formik.errors.phone)}
@@ -144,7 +144,7 @@ function Profile() {
                     disabled={!editing}
                     InputProps={{ startAdornment: <PhoneIcon fontSize="small" sx={{ mr: 1, color: 'action.active' }} /> }} />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField fullWidth label="Sitio / Ubicación" name="site" value={formik.values.site}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     error={formik.touched.site && Boolean(formik.errors.site)}
@@ -152,14 +152,14 @@ function Profile() {
                     disabled={!editing}
                     InputProps={{ startAdornment: <BusinessIcon fontSize="small" sx={{ mr: 1, color: 'action.active' }} /> }} />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField fullWidth label="Contacto de Emergencia" name="emergencyContact" value={formik.values.emergencyContact}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     error={formik.touched.emergencyContact && Boolean(formik.errors.emergencyContact)}
                     helperText={formik.touched.emergencyContact && formik.errors.emergencyContact}
                     disabled={!editing} />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <TextField fullWidth label="Teléfono de Emergencia" name="emergencyPhone" value={formik.values.emergencyPhone}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     error={formik.touched.emergencyPhone && Boolean(formik.errors.emergencyPhone)}
@@ -167,7 +167,7 @@ function Profile() {
                     disabled={!editing} />
                 </Grid>
                 {editing && (
-                  <Grid item xs={12}>
+                  <Grid size={12}>
                     <Box sx={{ display: 'flex', gap: 1 }}>
                       <Button variant="contained" startIcon={<SaveIcon />} onClick={formik.handleSubmit} disabled={formik.isSubmitting}>
                         {formik.isSubmitting ? 'Guardando...' : 'Guardar'}
