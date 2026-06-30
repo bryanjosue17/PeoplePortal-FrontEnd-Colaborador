@@ -6,146 +6,151 @@ import {
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 import { getMyRequests, createVacation, createCertificate, createVoucher, cancelRequest } from '../../api/requests';
 
 const statusColors = {
-  Submitted: 'info',
-  Enviado: 'info',
-  Approved: 'success',
-  Aprobado: 'success',
-  Rejected: 'error',
-  Rechazado: 'error',
-  Cancelled: 'default',
-  Cancelado: 'default',
-  Pending: 'warning',
-  Pendiente: 'warning',
+  Submitted: 'info', Enviado: 'info',
+  Approved: 'success', Aprobado: 'success',
+  Rejected: 'error', Rechazado: 'error',
+  Cancelled: 'default', Cancelado: 'default',
+  Pending: 'warning', Pendiente: 'warning',
 };
+
+const vacationSchema = yup.object({
+  startDate: yup.string().required('Requerido'),
+  endDate: yup.string().required('Requerido'),
+  reason: yup.string().required('Requerido'),
+});
+
+const certificateSchema = yup.object({
+  certificateType: yup.string().required('Requerido'),
+  estimatedDate: yup.string(),
+  reason: yup.string().required('Requerido'),
+});
+
+const voucherSchema = yup.object({
+  period: yup.string().required('Requerido'),
+  year: yup.string().required('Requerido'),
+  reason: yup.string().required('Requerido'),
+});
 
 function TabPanel({ children, value, index }) {
   return value === index ? <Box sx={{ pt: 3 }}>{children}</Box> : null;
 }
 
 function RequestForm({ type, onSubmit, loading }) {
-  const [form, setForm] = useState({});
+  const schemas = { vacation: vacationSchema, certificate: certificateSchema, voucher: voucherSchema };
+  const initial = { vacation: { startDate: '', endDate: '', reason: '' }, certificate: { certificateType: '', estimatedDate: '', reason: '' }, voucher: { period: '', year: '', reason: '' } };
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const formik = useFormik({
+    initialValues: initial[type] || {},
+    validationSchema: schemas[type],
+    onSubmit: (values) => {
+      onSubmit(values);
+      formik.resetForm();
+    },
+    enableReinitialize: true,
+  });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(form);
-    setForm({});
-  };
-
-  if (type === 'vacation') {
-    return (
-      <Card sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" fontWeight={600} gutterBottom>Nueva Solicitud de Vacaciones</Typography>
-        <Box component="form" onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="Fecha de Inicio" type="date" name="startDate"
-                value={form.startDate || ''} onChange={handleChange} required InputLabelProps={{ shrink: true }} />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="Fecha de Fin" type="date" name="endDate"
-                value={form.endDate || ''} onChange={handleChange} required InputLabelProps={{ shrink: true }} />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField fullWidth label="Motivo" name="reason" multiline rows={3}
-                value={form.reason || ''} onChange={handleChange} required />
-            </Grid>
-            <Grid item xs={12}>
-              <Button type="submit" variant="contained" startIcon={<SendIcon />} disabled={loading}>
-                {loading ? 'Enviando...' : 'Enviar Solicitud'}
-              </Button>
-            </Grid>
+  return (
+    <Card sx={{ p: 3, mb: 3 }}>
+      <Typography variant="h6" fontWeight={600} gutterBottom>
+        Nueva Solicitud de {type === 'vacation' ? 'Vacaciones' : type === 'certificate' ? 'Constancia' : 'Voucher'}
+      </Typography>
+      <Box component="form" onSubmit={formik.handleSubmit}>
+        <Grid container spacing={2}>
+          {type === 'vacation' && (
+            <>
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField fullWidth label="Fecha de Inicio" type="date" name="startDate"
+                  value={formik.values.startDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                  error={formik.touched.startDate && Boolean(formik.errors.startDate)}
+                  helperText={formik.touched.startDate && formik.errors.startDate}
+                  required InputLabelProps={{ shrink: true }} />
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField fullWidth label="Fecha de Fin" type="date" name="endDate"
+                  value={formik.values.endDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                  error={formik.touched.endDate && Boolean(formik.errors.endDate)}
+                  helperText={formik.touched.endDate && formik.errors.endDate}
+                  required InputLabelProps={{ shrink: true }} />
+              </Grid>
+            </>
+          )}
+          {type === 'certificate' && (
+            <>
+              <Grid item xs={12} sm={6} md={4}>
+                <FormControl fullWidth required error={formik.touched.certificateType && Boolean(formik.errors.certificateType)}>
+                  <InputLabel>Tipo de Constancia</InputLabel>
+                  <Select name="certificateType" value={formik.values.certificateType} onChange={formik.handleChange}
+                    onBlur={formik.handleBlur} label="Tipo de Constancia">
+                    <MenuItem value="Trabajo">Constancia de Trabajo</MenuItem>
+                    <MenuItem value="Salario">Constancia de Salario</MenuItem>
+                    <MenuItem value="Vacaciones">Constancia de Vacaciones</MenuItem>
+                    <MenuItem value="Otro">Otro</MenuItem>
+                  </Select>
+                </FormControl>
+                {formik.touched.certificateType && formik.errors.certificateType && (
+                  <Typography variant="caption" color="error">{formik.errors.certificateType}</Typography>
+                )}
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField fullWidth label="Fecha Estimada" type="date" name="estimatedDate"
+                  value={formik.values.estimatedDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                  InputLabelProps={{ shrink: true }} />
+              </Grid>
+            </>
+          )}
+          {type === 'voucher' && (
+            <>
+              <Grid item xs={12} sm={6} md={4}>
+                <FormControl fullWidth required error={formik.touched.period && Boolean(formik.errors.period)}>
+                  <InputLabel>Periodo</InputLabel>
+                  <Select name="period" value={formik.values.period} onChange={formik.handleChange}
+                    onBlur={formik.handleBlur} label="Periodo">
+                    <MenuItem value="Enero">Enero</MenuItem>
+                    <MenuItem value="Febrero">Febrero</MenuItem>
+                    <MenuItem value="Marzo">Marzo</MenuItem>
+                    <MenuItem value="Abril">Abril</MenuItem>
+                    <MenuItem value="Mayo">Mayo</MenuItem>
+                    <MenuItem value="Junio">Junio</MenuItem>
+                    <MenuItem value="Julio">Julio</MenuItem>
+                    <MenuItem value="Agosto">Agosto</MenuItem>
+                    <MenuItem value="Septiembre">Septiembre</MenuItem>
+                    <MenuItem value="Octubre">Octubre</MenuItem>
+                    <MenuItem value="Noviembre">Noviembre</MenuItem>
+                    <MenuItem value="Diciembre">Diciembre</MenuItem>
+                  </Select>
+                </FormControl>
+                {formik.touched.period && formik.errors.period && (
+                  <Typography variant="caption" color="error">{formik.errors.period}</Typography>
+                )}
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <TextField fullWidth label="Año" type="number" name="year"
+                  value={formik.values.year} onChange={formik.handleChange} onBlur={formik.handleBlur}
+                  error={formik.touched.year && Boolean(formik.errors.year)}
+                  helperText={formik.touched.year && formik.errors.year} required />
+              </Grid>
+            </>
+          )}
+          <Grid item xs={12}>
+            <TextField fullWidth label="Motivo" name="reason" multiline rows={3}
+              value={formik.values.reason} onChange={formik.handleChange} onBlur={formik.handleBlur}
+              error={formik.touched.reason && Boolean(formik.errors.reason)}
+              helperText={formik.touched.reason && formik.errors.reason} required />
           </Grid>
-        </Box>
-      </Card>
-    );
-  }
-
-  if (type === 'certificate') {
-    return (
-      <Card sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" fontWeight={600} gutterBottom>Nueva Solicitud de Constancia</Typography>
-        <Box component="form" onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required>
-                <InputLabel>Tipo de Constancia</InputLabel>
-                <Select name="certificateType" value={form.certificateType || ''} onChange={handleChange} label="Tipo de Constancia">
-                  <MenuItem value="Trabajo">Constancia de Trabajo</MenuItem>
-                  <MenuItem value="Salario">Constancia de Salario</MenuItem>
-                  <MenuItem value="Vacaciones">Constancia de Vacaciones</MenuItem>
-                  <MenuItem value="Otro">Otro</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="Fecha Estimada" type="date" name="estimatedDate"
-                value={form.estimatedDate || ''} onChange={handleChange} InputLabelProps={{ shrink: true }} />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField fullWidth label="Motivo" name="reason" multiline rows={3}
-                value={form.reason || ''} onChange={handleChange} required />
-            </Grid>
-            <Grid item xs={12}>
-              <Button type="submit" variant="contained" startIcon={<SendIcon />} disabled={loading}>
-                {loading ? 'Enviando...' : 'Enviar Solicitud'}
-              </Button>
-            </Grid>
+          <Grid item xs={12}>
+            <Button type="submit" variant="contained" startIcon={<SendIcon />} disabled={loading || formik.isSubmitting}>
+              {loading ? 'Enviando...' : 'Enviar Solicitud'}
+            </Button>
           </Grid>
-        </Box>
-      </Card>
-    );
-  }
-
-  if (type === 'voucher') {
-    return (
-      <Card sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" fontWeight={600} gutterBottom>Nueva Solicitud de Voucher</Typography>
-        <Box component="form" onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required>
-                <InputLabel>Periodo</InputLabel>
-                <Select name="period" value={form.period || ''} onChange={handleChange} label="Periodo">
-                  <MenuItem value="Enero">Enero</MenuItem>
-                  <MenuItem value="Febrero">Febrero</MenuItem>
-                  <MenuItem value="Marzo">Marzo</MenuItem>
-                  <MenuItem value="Abril">Abril</MenuItem>
-                  <MenuItem value="Mayo">Mayo</MenuItem>
-                  <MenuItem value="Junio">Junio</MenuItem>
-                  <MenuItem value="Julio">Julio</MenuItem>
-                  <MenuItem value="Agosto">Agosto</MenuItem>
-                  <MenuItem value="Septiembre">Septiembre</MenuItem>
-                  <MenuItem value="Octubre">Octubre</MenuItem>
-                  <MenuItem value="Noviembre">Noviembre</MenuItem>
-                  <MenuItem value="Diciembre">Diciembre</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="Año" type="number" name="year"
-                value={form.year || ''} onChange={handleChange} required />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField fullWidth label="Motivo" name="reason" multiline rows={3}
-                value={form.reason || ''} onChange={handleChange} required />
-            </Grid>
-            <Grid item xs={12}>
-              <Button type="submit" variant="contained" startIcon={<SendIcon />} disabled={loading}>
-                {loading ? 'Enviando...' : 'Enviar Solicitud'}
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-      </Card>
-    );
-  }
-
-  return null;
+        </Grid>
+      </Box>
+    </Card>
+  );
 }
 
 function Requests() {
@@ -249,9 +254,7 @@ function Requests() {
                     <TableBody>
                       {filteredReqs.map(r => (
                         <TableRow key={r.id} hover>
-                          <TableCell>
-                            {new Date(r.createdAt || r.submittedAt).toLocaleDateString()}
-                          </TableCell>
+                          <TableCell>{new Date(r.createdAt || r.submittedAt).toLocaleDateString()}</TableCell>
                           <TableCell>
                             {r.reason || r.startDate
                               ? `${r.startDate || ''} ${r.endDate ? '- ' + r.endDate : ''} ${r.certificateType || r.period || ''} ${r.year || ''}`
