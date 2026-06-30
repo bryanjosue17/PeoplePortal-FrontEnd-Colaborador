@@ -70,6 +70,13 @@ Manifiesto: `k8s/frontend-colaborador.yaml`
 - Service: NodePort `:30081`
 - URL local: `http://localhost:30081`
 
+## CI/CD
+
+Pipeline en `.github/workflows/ci.yml`:
+
+1. `build-test`: npm ci → lint → `npm run test:coverage` (reporta a Codacy) → build
+2. `docker`: build + push imagen a GHCR (`peopleportal-frontend-colaborador`)
+
 ## Comandos
 
 ```bash
@@ -78,6 +85,9 @@ npm run dev
 
 # Tests
 npm test
+
+# Tests con cobertura (Codacy)
+npm run test:coverage
 
 # Build producción
 npm run build
