@@ -8,20 +8,37 @@ import BusinessIcon from '@mui/icons-material/Business';
 import SaveIcon from '@mui/icons-material/Save';
 import EditIcon from '@mui/icons-material/Edit';
 import CancelIcon from '@mui/icons-material/Cancel';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 import { getMyProfile, updateMyProfile } from '../../api/employees';
+
+const validationSchema = yup.object({
+  phone: yup.string(),
+  site: yup.string(),
+  emergencyContact: yup.string(),
+  emergencyPhone: yup.string(),
+});
 
 function Profile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editing, setEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
-  const [form, setForm] = useState({
-    phone: '',
-    emergencyContact: '',
-    emergencyPhone: '',
-    site: ''
+
+  const formik = useFormik({
+    initialValues: { phone: '', emergencyContact: '', emergencyPhone: '', site: '' },
+    validationSchema,
+    onSubmit: async (values) => {
+      try {
+        const res = await updateMyProfile(values);
+        setProfile(res.data);
+        setEditing(false);
+        setSnackbar({ open: true, message: 'Perfil actualizado exitosamente', severity: 'success' });
+      } catch (err) {
+        setSnackbar({ open: true, message: err.response?.data?.message || 'Error al actualizar perfil', severity: 'error' });
+      }
+    },
   });
 
   useEffect(() => {
@@ -29,41 +46,23 @@ function Profile() {
       .then(res => {
         const p = res.data;
         setProfile(p);
-        setForm({
+        formik.setValues({
           phone: p.phone || '',
           emergencyContact: p.emergencyContact || '',
           emergencyPhone: p.emergencyPhone || '',
-          site: p.site || ''
+          site: p.site || '',
         });
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      const res = await updateMyProfile(form);
-      setProfile(res.data);
-      setEditing(false);
-      setSnackbar({ open: true, message: 'Perfil actualizado exitosamente', severity: 'success' });
-    } catch (err) {
-      setSnackbar({ open: true, message: err.response?.data?.message || 'Error al actualizar perfil', severity: 'error' });
-    } finally {
-      setSaving(false);
-    }
-  };
-
   const handleCancel = () => {
-    setForm({
+    formik.setValues({
       phone: profile?.phone || '',
       emergencyContact: profile?.emergencyContact || '',
       emergencyPhone: profile?.emergencyPhone || '',
-      site: profile?.site || ''
+      site: profile?.site || '',
     });
     setEditing(false);
   };
@@ -134,72 +133,56 @@ function Profile() {
                 </Button>
               ) : (
                 <Box sx={{ display: 'flex', gap: 1 }}>
-                  <Button variant="contained" startIcon={<SaveIcon />} onClick={handleSave} disabled={saving}>
-                    {saving ? 'Guardando...' : 'Guardar'}
+                  <Button variant="contained" startIcon={<SaveIcon />} onClick={formik.handleSubmit} disabled={formik.isSubmitting}>
+                    {formik.isSubmitting ? 'Guardando...' : 'Guardar'}
                   </Button>
-                  <Button variant="outlined" startIcon={<CancelIcon />} onClick={handleCancel} disabled={saving}>
+                  <Button variant="outlined" startIcon={<CancelIcon />} onClick={handleCancel} disabled={formik.isSubmitting}>
                     Cancelar
                   </Button>
                 </Box>
               )}
             </Box>
 
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Teléfono"
-                  name="phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                  disabled={!editing}
-                  InputProps={{ startAdornment: <PhoneIcon fontSize="small" sx={{ mr: 1, color: 'action.active' }} /> }}
-                />
+            <Box component="form" onSubmit={formik.handleSubmit}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6} md={4}>
+                  <TextField fullWidth label="Teléfono" name="phone" value={formik.values.phone}
+                    onChange={formik.handleChange} onBlur={formik.handleBlur}
+                    error={formik.touched.phone && Boolean(formik.errors.phone)}
+                    helperText={formik.touched.phone && formik.errors.phone}
+                    disabled={!editing}
+                    InputProps={{ startAdornment: <PhoneIcon fontSize="small" sx={{ mr: 1, color: 'action.active' }} /> }} />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <TextField fullWidth label="Sitio / Ubicación" name="site" value={formik.values.site}
+                    onChange={formik.handleChange} onBlur={formik.handleBlur}
+                    error={formik.touched.site && Boolean(formik.errors.site)}
+                    helperText={formik.touched.site && formik.errors.site}
+                    disabled={!editing}
+                    InputProps={{ startAdornment: <BusinessIcon fontSize="small" sx={{ mr: 1, color: 'action.active' }} /> }} />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <TextField fullWidth label="Contacto de Emergencia" name="emergencyContact" value={formik.values.emergencyContact}
+                    onChange={formik.handleChange} onBlur={formik.handleBlur}
+                    error={formik.touched.emergencyContact && Boolean(formik.errors.emergencyContact)}
+                    helperText={formik.touched.emergencyContact && formik.errors.emergencyContact}
+                    disabled={!editing} />
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <TextField fullWidth label="Teléfono de Emergencia" name="emergencyPhone" value={formik.values.emergencyPhone}
+                    onChange={formik.handleChange} onBlur={formik.handleBlur}
+                    error={formik.touched.emergencyPhone && Boolean(formik.errors.emergencyPhone)}
+                    helperText={formik.touched.emergencyPhone && formik.errors.emergencyPhone}
+                    disabled={!editing} />
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Sitio / Ubicación"
-                  name="site"
-                  value={form.site}
-                  onChange={handleChange}
-                  disabled={!editing}
-                  InputProps={{ startAdornment: <BusinessIcon fontSize="small" sx={{ mr: 1, color: 'action.active' }} /> }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Contacto de Emergencia"
-                  name="emergencyContact"
-                  value={form.emergencyContact}
-                  onChange={handleChange}
-                  disabled={!editing}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  fullWidth
-                  label="Teléfono de Emergencia"
-                  name="emergencyPhone"
-                  value={form.emergencyPhone}
-                  onChange={handleChange}
-                  disabled={!editing}
-                />
-              </Grid>
-            </Grid>
+            </Box>
           </Card>
         </Grid>
       </Grid>
 
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={4000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
-      >
-        <Alert severity={snackbar.severity} variant="filled" sx={{ width: '100%' }}>
-          {snackbar.message}
-        </Alert>
+      <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+        <Alert severity={snackbar.severity} variant="filled" sx={{ width: '100%' }}>{snackbar.message}</Alert>
       </Snackbar>
     </Box>
   );

@@ -19,10 +19,12 @@
     "@mui/material": "^9.1.2",
     "@react-keycloak/web": "^3.4.0",
     "axios": "^1.18.1",
+    "formik": "^2.4.9",
     "keycloak-js": "^26.2.4",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "react-router-dom": "^7.18.1"
+    "react-router-dom": "^7.18.1",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
@@ -31,11 +33,11 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
+    "@vitest/coverage-v8": "^4.1.9",
     "jsdom": "^29.1.1",
     "msw": "^2.14.6",
     "oxlint": "^1.69.0",
     "vite": "^8.1.0",
-    "vitest": "^4.1.9",
-    "@vitest/coverage-v8": "^4.1.9"
+    "vitest": "^4.1.9"
   }
 }
