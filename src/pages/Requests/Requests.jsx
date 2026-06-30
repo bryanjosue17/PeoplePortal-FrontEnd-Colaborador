@@ -64,14 +64,14 @@ function RequestForm({ type, onSubmit, loading }) {
         <Grid container spacing={2}>
           {type === 'vacation' && (
             <>
-              <Grid item xs={12} sm={12} lg={6}>
+              <Grid item xs={12}>
                 <TextField fullWidth label="Fecha de Inicio" type="date" name="startDate"
                   value={formik.values.startDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.startDate && Boolean(formik.errors.startDate)}
                   helperText={formik.touched.startDate && formik.errors.startDate}
                   required InputLabelProps={{ shrink: true }} />
               </Grid>
-              <Grid item xs={12} sm={12} lg={6}>
+              <Grid item xs={12}>
                 <TextField fullWidth label="Fecha de Fin" type="date" name="endDate"
                   value={formik.values.endDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.endDate && Boolean(formik.errors.endDate)}
@@ -82,7 +82,7 @@ function RequestForm({ type, onSubmit, loading }) {
           )}
           {type === 'certificate' && (
             <>
-              <Grid item xs={12} sm={12} lg={6}>
+              <Grid item xs={12}>
                 <FormControl fullWidth required error={formik.touched.certificateType && Boolean(formik.errors.certificateType)}>
                   <InputLabel>Tipo de Constancia</InputLabel>
                   <Select name="certificateType" value={formik.values.certificateType} onChange={formik.handleChange}
@@ -97,7 +97,7 @@ function RequestForm({ type, onSubmit, loading }) {
                   <Typography variant="caption" color="error">{formik.errors.certificateType}</Typography>
                 )}
               </Grid>
-              <Grid item xs={12} sm={12} lg={6}>
+              <Grid item xs={12}>
                 <TextField fullWidth label="Fecha Estimada" type="date" name="estimatedDate"
                   value={formik.values.estimatedDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   InputLabelProps={{ shrink: true }} />
@@ -106,7 +106,7 @@ function RequestForm({ type, onSubmit, loading }) {
           )}
           {type === 'voucher' && (
             <>
-              <Grid item xs={12} sm={12} lg={6}>
+              <Grid item xs={12}>
                 <FormControl fullWidth required error={formik.touched.period && Boolean(formik.errors.period)}>
                   <InputLabel>Periodo</InputLabel>
                   <Select name="period" value={formik.values.period} onChange={formik.handleChange}
@@ -129,7 +129,7 @@ function RequestForm({ type, onSubmit, loading }) {
                   <Typography variant="caption" color="error">{formik.errors.period}</Typography>
                 )}
               </Grid>
-              <Grid item xs={12} sm={12} lg={6}>
+              <Grid item xs={12}>
                 <TextField fullWidth label="Año" type="number" name="year"
                   value={formik.values.year} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.year && Boolean(formik.errors.year)}

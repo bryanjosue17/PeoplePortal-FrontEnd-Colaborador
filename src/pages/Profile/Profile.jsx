@@ -136,7 +136,7 @@ function Profile() {
 
             <Box component="form" onSubmit={formik.handleSubmit}>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={12} lg={6}>
+                <Grid item xs={12}>
                   <TextField fullWidth label="Teléfono" name="phone" value={formik.values.phone}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     error={formik.touched.phone && Boolean(formik.errors.phone)}
@@ -144,7 +144,7 @@ function Profile() {
                     disabled={!editing}
                     InputProps={{ startAdornment: <PhoneIcon fontSize="small" sx={{ mr: 1, color: 'action.active' }} /> }} />
                 </Grid>
-                <Grid item xs={12} sm={12} lg={6}>
+                <Grid item xs={12}>
                   <TextField fullWidth label="Sitio / Ubicación" name="site" value={formik.values.site}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     error={formik.touched.site && Boolean(formik.errors.site)}
@@ -152,14 +152,14 @@ function Profile() {
                     disabled={!editing}
                     InputProps={{ startAdornment: <BusinessIcon fontSize="small" sx={{ mr: 1, color: 'action.active' }} /> }} />
                 </Grid>
-                <Grid item xs={12} sm={12} lg={6}>
+                <Grid item xs={12}>
                   <TextField fullWidth label="Contacto de Emergencia" name="emergencyContact" value={formik.values.emergencyContact}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     error={formik.touched.emergencyContact && Boolean(formik.errors.emergencyContact)}
                     helperText={formik.touched.emergencyContact && formik.errors.emergencyContact}
                     disabled={!editing} />
                 </Grid>
-                <Grid item xs={12} sm={12} lg={6}>
+                <Grid item xs={12}>
                   <TextField fullWidth label="Teléfono de Emergencia" name="emergencyPhone" value={formik.values.emergencyPhone}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     error={formik.touched.emergencyPhone && Boolean(formik.errors.emergencyPhone)}
