@@ -16,12 +16,13 @@ Portal de autoservicio para colaboradores. Visualiza dashboard, perfil, document
 ## Scripts
 
 ```bash
-npm run dev      # Dev server (localhost:5173)
-npm run build    # Build producción
-npm run preview  # Preview build
-npm run lint     # Oxlint
-npm run test     # Tests (vitest run)
-npm run test:watch  # Tests en modo watch
+npm run dev           # Dev server (localhost:5173)
+npm run build         # Build producción
+npm run preview       # Preview build
+npm run lint          # Oxlint
+npm run test          # Tests (vitest run)
+npm run test:coverage # Tests con cobertura (Codacy)
+npm run test:watch    # Tests en modo watch
 ```
 
 ## Estructura
