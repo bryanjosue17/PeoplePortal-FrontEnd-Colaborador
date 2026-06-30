@@ -59,5 +59,5 @@ Ubicados en `src/test/`:
 ## Despliegue
 
 - **Docker**: `Dockerfile` multi-stage (node build + nginx:alpine)
-- **K8s**: `deploy/k8s/frontend-colaborador.yaml` (NodePort 30081)
+- **K8s**: `k8s/frontend-colaborador.yaml` (NodePort 30081)
 - **Nginx**: Proxy `/api/` → `peopleportal-api-service:80`
