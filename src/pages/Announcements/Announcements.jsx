@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import {
   Box, Grid, Card, CardContent, Typography, Chip, Skeleton, Alert, Paper
 } from '@mui/material';
@@ -23,7 +23,7 @@ function Announcements() {
         <Typography variant="h5" fontWeight={600} gutterBottom>Comunicados</Typography>
         <Grid container spacing={3}>
           {[...Array(4)].map((_, i) => (
-            <Grid item xs={12} sm={6} md={4} key={i}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={i}>
               <Skeleton variant="rounded" height={180} />
             </Grid>
           ))}
@@ -57,7 +57,7 @@ function Announcements() {
       ) : (
         <Grid container spacing={3}>
           {list.map((a) => (
-            <Grid item xs={12} sm={6} md={4} key={a.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={a.id}>
               <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import {
   Box, Grid, Card, CardContent, Typography, Chip, Skeleton, Alert, Paper
 } from '@mui/material';
@@ -7,8 +7,8 @@ import { getActiveBenefits } from '../../api/benefits';
 
 const typeColors = {
   Salud: 'error',
-  Educación: 'primary',
-  Alimentación: 'success',
+  'Educación': 'primary',
+  'Alimentación': 'success',
   Transporte: 'warning',
   Bienestar: 'secondary',
   Otro: 'default',
@@ -32,7 +32,7 @@ function Benefits() {
         <Typography variant="h5" fontWeight={600} gutterBottom>Beneficios</Typography>
         <Grid container spacing={3}>
           {[...Array(4)].map((_, i) => (
-            <Grid item xs={12} sm={6} md={4} key={i}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={i}>
               <Skeleton variant="rounded" height={180} />
             </Grid>
           ))}
@@ -66,7 +66,7 @@ function Benefits() {
       ) : (
         <Grid container spacing={3}>
           {list.map((b) => (
-            <Grid item xs={12} sm={6} md={4} key={b.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={b.id}>
               <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import {
   Box, Paper, Typography, TextField, Button, Select, MenuItem, FormControl,
   InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
@@ -38,7 +38,7 @@ const voucherSchema = yup.object({
 });
 
 function TabPanel({ children, value, index }) {
-  return value === index ? <Box sx={{ pt: 3 }}>{children}</Box> : null;
+  return value === index ? <Box sx={{ px: 3, pb: 3, pt: 2 }}>{children}</Box> : null;
 }
 
 function RequestForm({ type, onSubmit, loading }) {
@@ -64,25 +64,25 @@ function RequestForm({ type, onSubmit, loading }) {
         <Grid container spacing={2}>
           {type === 'vacation' && (
             <>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField fullWidth label="Fecha de Inicio" type="date" name="startDate"
                   value={formik.values.startDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.startDate && Boolean(formik.errors.startDate)}
                   helperText={formik.touched.startDate && formik.errors.startDate}
-                  required InputLabelProps={{ shrink: true }} />
+                  required slotProps={{ inputLabel: { shrink: true } }} />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField fullWidth label="Fecha de Fin" type="date" name="endDate"
                   value={formik.values.endDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.endDate && Boolean(formik.errors.endDate)}
                   helperText={formik.touched.endDate && formik.errors.endDate}
-                  required InputLabelProps={{ shrink: true }} />
+                  required slotProps={{ inputLabel: { shrink: true } }} />
               </Grid>
             </>
           )}
           {type === 'certificate' && (
             <>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth required error={formik.touched.certificateType && Boolean(formik.errors.certificateType)}>
                   <InputLabel>Tipo de Constancia</InputLabel>
                   <Select name="certificateType" value={formik.values.certificateType} onChange={formik.handleChange}
@@ -97,16 +97,16 @@ function RequestForm({ type, onSubmit, loading }) {
                   <Typography variant="caption" color="error">{formik.errors.certificateType}</Typography>
                 )}
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField fullWidth label="Fecha Estimada" type="date" name="estimatedDate"
                   value={formik.values.estimatedDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
-                  InputLabelProps={{ shrink: true }} />
+                  slotProps={{ inputLabel: { shrink: true } }} />
               </Grid>
             </>
           )}
           {type === 'voucher' && (
             <>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth required error={formik.touched.period && Boolean(formik.errors.period)}>
                   <InputLabel>Periodo</InputLabel>
                   <Select name="period" value={formik.values.period} onChange={formik.handleChange}
@@ -129,7 +129,7 @@ function RequestForm({ type, onSubmit, loading }) {
                   <Typography variant="caption" color="error">{formik.errors.period}</Typography>
                 )}
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField fullWidth label="Año" type="number" name="year"
                   value={formik.values.year} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.year && Boolean(formik.errors.year)}
@@ -137,13 +137,13 @@ function RequestForm({ type, onSubmit, loading }) {
               </Grid>
             </>
           )}
-          <Grid item xs={12}>
+          <Grid size={12}>
             <TextField fullWidth label="Motivo" name="reason" multiline rows={3}
               value={formik.values.reason} onChange={formik.handleChange} onBlur={formik.handleBlur}
               error={formik.touched.reason && Boolean(formik.errors.reason)}
               helperText={formik.touched.reason && formik.errors.reason} required />
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Button type="submit" variant="contained" startIcon={<SendIcon />} disabled={loading || formik.isSubmitting}>
               {loading ? 'Enviando...' : 'Enviar Solicitud'}
             </Button>

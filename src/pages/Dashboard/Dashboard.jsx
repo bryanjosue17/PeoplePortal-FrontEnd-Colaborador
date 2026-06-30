@@ -51,13 +51,13 @@ function Dashboard() {
           No se pudieron cargar los datos del dashboard. Algunas funciones pueden no estar disponibles.
         </Alert>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <StatCard icon={<AssignmentIcon />} title="Solicitudes Pendientes" value="--" color="#ed6c02" />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <StatCard icon={<DescriptionIcon />} title="Documentos Disponibles" value="--" color="#1565c0" />
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <StatCard icon={<CampaignIcon />} title="Comunicados Activos" value="--" color="#7b1fa2" />
           </Grid>
         </Grid>
@@ -75,7 +75,7 @@ function Dashboard() {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           {loading ? (
             <Skeleton variant="rounded" height={100} />
           ) : (
@@ -87,7 +87,7 @@ function Dashboard() {
             />
           )}
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           {loading ? (
             <Skeleton variant="rounded" height={100} />
           ) : (
@@ -99,7 +99,7 @@ function Dashboard() {
             />
           )}
         </Grid>
-        <Grid item xs={12} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           {loading ? (
             <Skeleton variant="rounded" height={100} />
           ) : (
@@ -112,7 +112,7 @@ function Dashboard() {
           )}
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3, borderRadius: 3 }}>
             <Typography variant="h6" fontWeight={600} gutterBottom>
               Comunicados Recientes
@@ -139,7 +139,7 @@ function Dashboard() {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3, borderRadius: 3 }}>
             <Typography variant="h6" fontWeight={600} gutterBottom>
               Resumen de Beneficios
