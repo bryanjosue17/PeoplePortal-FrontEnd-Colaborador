@@ -1,64 +1,45 @@
-# PeoplePortal — FrontEnd Colaborador
+# PeoplePortal — Portal del Colaborador
 
-Portal de autoservicio para colaboradores. Visualiza dashboard, perfil, documentos, solicitudes, comunicados y beneficios.
+Portal de autoservicio para colaboradores. Permite consultar perfil, documentos, beneficios, comunicados y gestionar solicitudes a RRHH.
 
 ## Stack
 
 | Capa | Tecnología |
-|------|-----------|
-| UI | React 19 + MUI 9 |
+|---|---|
+| UI | React 19 + MUI v9 |
 | Build | Vite 8 |
 | Auth | Keycloak (PKCE S256) |
-| HTTP | Axios |
+| HTTP | Axios + interceptor Bearer |
 | Test | Vitest + Testing Library |
-| Lint | Oxlint |
+| Lint | oxlint |
 
 ## Scripts
 
 ```bash
-npm run dev           # Dev server (localhost:5173)
+npm run dev           # Dev server → http://localhost:5173
 npm run build         # Build producción
-npm run preview       # Preview build
-npm run lint          # Oxlint
-npm run test          # Tests (vitest run)
-npm run test:coverage # Tests con cobertura (Codacy)
-npm run test:watch    # Tests en modo watch
+npm run test          # Tests (Vitest)
+npm run test:coverage # Tests con reporte de cobertura (Codacy)
+npm run lint          # oxlint
 ```
 
-## Estructura
+## Módulos del portal
 
-```
-src/
-  api/            # Clientes HTTP (axios)
-  components/     # Componentes compartidos (Layout)
-  pages/          # Páginas (Dashboard, Profile, Documents, Requests, Announcements, Benefits)
-  test/           # Tests unitarios
-  theme/          # Tema MUI
-  keycloak.js     # Config Keycloak
-  App.jsx         # Router + Providers
-  main.jsx        # Entry point
-```
-
-## Tests
-
-Ubicados en `src/test/`:
-
-| Archivo | Sujetos | Tests |
-|---------|---------|-------|
-| `keycloak.test.js` | Configuración Keycloak | 3 |
-| `client.test.js` | Axios instance + interceptors | 5 |
-| `Layout.test.jsx` | Navegación, usuario, children | 6 |
-| `Dashboard.test.jsx` | Estados loading/error/data | 5 |
-
-## Variables de entorno
-
-| Variable | Defecto | Descripción |
-|----------|---------|-------------|
-| `VITE_KEYCLOAK_URL` | `http://localhost:8080` | URL del servidor Keycloak |
-| `VITE_API_URL` | `''` (relativo) | URL base de la API |
+| Módulo | Ruta | Descripción |
+|---|---|---|
+| Dashboard | `/dashboard` | Resumen de solicitudes, documentos y comunicados |
+| Perfil | `/profile` | Información laboral + edición de contacto |
+| Documentos | `/documents` | Expediente digital del colaborador |
+| Solicitudes | `/requests` | Vacaciones, constancias y vouchers |
+| Comunicados | `/announcements` | Avisos internos de la empresa |
+| Beneficios | `/benefits` | Catálogo de beneficios |
 
 ## Despliegue
 
-- **Docker**: `Dockerfile` multi-stage (node build + nginx:alpine)
-- **K8s**: `k8s/frontend-colaborador.yaml` (NodePort 30081)
-- **Nginx**: Proxy `/api/` → `peopleportal-api-service:80`
+- **Docker**: imagen `peopleportal-frontend-colaborador:latest` (multi-stage + nginx)
+- **K8s**: NodePort `:30081` — `http://localhost:30081`
+- **Nginx**: proxy `/api/` → `peopleportal-api-service:80`
+
+## Documentación técnica
+
+Ver [`docs/`](./docs/README.md) para documentación detallada de arquitectura, autenticación, endpoints y despliegue.
