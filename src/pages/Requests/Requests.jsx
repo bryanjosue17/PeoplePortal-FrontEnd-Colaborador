@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box, Paper, Typography, TextField, Button, Select, MenuItem, FormControl,
   InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
@@ -19,9 +19,32 @@ const statusColors = {
   Pending: 'warning', Pendiente: 'warning',
 };
 
+const getTomorrow = () => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().split('T')[0];
+};
+
 const vacationSchema = yup.object({
-  startDate: yup.string().required('Requerido'),
-  endDate: yup.string().required('Requerido'),
+  startDate: yup
+    .string()
+    .required('Requerido')
+    .test('min-date', 'La fecha de inicio debe ser a partir de mañana', (val) => {
+      if (!val) return false;
+      return val >= getTomorrow();
+    }),
+  endDate: yup
+    .string()
+    .required('Requerido')
+    .test('min-date', 'La fecha de fin debe ser a partir de mañana', (val) => {
+      if (!val) return false;
+      return val >= getTomorrow();
+    })
+    .test('after-start', 'La fecha de fin debe ser igual o posterior al inicio', function (val) {
+      const { startDate } = this.parent;
+      if (!val || !startDate) return true;
+      return val >= startDate;
+    }),
   reason: yup.string().required('Requerido'),
 });
 
@@ -69,14 +92,14 @@ function RequestForm({ type, onSubmit, loading }) {
                   value={formik.values.startDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.startDate && Boolean(formik.errors.startDate)}
                   helperText={formik.touched.startDate && formik.errors.startDate}
-                  required slotProps={{ inputLabel: { shrink: true } }} />
+                  required slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: getTomorrow() } }} />
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
                 <TextField fullWidth label="Fecha de Fin" type="date" name="endDate"
                   value={formik.values.endDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.endDate && Boolean(formik.errors.endDate)}
                   helperText={formik.touched.endDate && formik.errors.endDate}
-                  required slotProps={{ inputLabel: { shrink: true } }} />
+                  required slotProps={{ inputLabel: { shrink: true }, htmlInput: { min: formik.values.startDate || getTomorrow() } }} />
               </Grid>
             </>
           )}
@@ -176,7 +199,7 @@ function Requests() {
     try {
       if (type === 'vacation') await createVacation(data);
       else if (type === 'certificate') await createCertificate(data);
-      else if (type === 'voucher') await createVoucher(data);
+      else if (type === 'voucher') await createVoucher({ ...data, period: `${data.period} ${data.year}` });
       toast.success('Solicitud creada exitosamente');
       loadRequests();
     } catch (err) {
@@ -254,7 +277,7 @@ function Requests() {
                     <TableBody>
                       {filteredReqs.map(r => (
                         <TableRow key={r.id} hover>
-                          <TableCell>{new Date(r.createdAt || r.submittedAt).toLocaleDateString()}</TableCell>
+                          <TableCell>{r.createdAtUtc ? new Date(r.createdAtUtc).toLocaleDateString('es-GT') : '-'}</TableCell>
                           <TableCell>
                             {r.reason || r.startDate
                               ? `${r.startDate || ''} ${r.endDate ? '- ' + r.endDate : ''} ${r.certificateType || r.period || ''} ${r.year || ''}`
