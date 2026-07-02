@@ -1,8 +1,9 @@
-﻿import { useState, useEffect } from 'react';
-import {
-  Box, Grid, Card, CardContent, Typography, Chip, Skeleton, Alert, Paper
-} from '@mui/material';
 import CampaignIcon from '@mui/icons-material/Campaign';
+import {
+  Alert, Box, Card, CardContent, Chip, Grid,
+  Skeleton, Typography
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 import { getActiveAnnouncements } from '../../api/announcements';
 
 function Announcements() {
@@ -23,7 +24,7 @@ function Announcements() {
         <Typography variant="h5" fontWeight={600} gutterBottom>Comunicados</Typography>
         <Grid container spacing={3}>
           {[...Array(4)].map((_, i) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={i}>
+            <Grid size={{ md: 4, sm: 6, xs: 12 }} key={i}>
               <Skeleton variant="rounded" height={180} />
             </Grid>
           ))}
@@ -49,18 +50,18 @@ function Announcements() {
 
       {list.length === 0 ? (
         <Card>
-          <CardContent sx={{ textAlign: 'center', py: 6 }}>
-            <CampaignIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
+          <CardContent sx={{ py: 6, textAlign: 'center' }}>
+            <CampaignIcon sx={{ color: 'text.disabled', fontSize: 48, mb: 2 }} />
             <Typography color="text.secondary">No hay comunicados activos en este momento.</Typography>
           </CardContent>
         </Card>
       ) : (
         <Grid container spacing={3}>
           {list.map((a) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={a.id}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Grid size={{ md: 4, sm: 6, xs: 12 }} key={a.id}>
+              <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <CardContent sx={{ flexGrow: 1 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                  <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 1 }}>
                     <Chip
                       label={a.type || 'General'}
                       size="small"
@@ -77,16 +78,16 @@ function Announcements() {
                     {a.title}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 4,
+                    display: '-webkit-box',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 4,
-                    WebkitBoxOrient: 'vertical',
                   }}>
                     {a.body || a.description || ''}
                   </Typography>
                   {a.author && (
-                    <Typography variant="caption" color="text.disabled" sx={{ mt: 1, display: 'block' }}>
+                    <Typography variant="caption" color="text.disabled" sx={{ display: 'block', mt: 1 }}>
                       Por: {a.author}
                     </Typography>
                   )}

@@ -1,17 +1,18 @@
-﻿import { useState, useEffect } from 'react';
-import {
-  Box, Grid, Card, CardContent, Typography, Chip, Skeleton, Alert, Paper
-} from '@mui/material';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import {
+  Alert, Box, Card, CardContent, Chip, Grid,
+  Skeleton, Typography
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 import { getActiveBenefits } from '../../api/benefits';
 
 const typeColors = {
-  Salud: 'error',
-  'Educación': 'primary',
   'Alimentación': 'success',
-  Transporte: 'warning',
   Bienestar: 'secondary',
+  'Educación': 'primary',
   Otro: 'default',
+  Salud: 'error',
+  Transporte: 'warning',
 };
 
 function Benefits() {
@@ -32,7 +33,7 @@ function Benefits() {
         <Typography variant="h5" fontWeight={600} gutterBottom>Beneficios</Typography>
         <Grid container spacing={3}>
           {[...Array(4)].map((_, i) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={i}>
+            <Grid size={{ md: 4, sm: 6, xs: 12 }} key={i}>
               <Skeleton variant="rounded" height={180} />
             </Grid>
           ))}
@@ -58,18 +59,18 @@ function Benefits() {
 
       {list.length === 0 ? (
         <Card>
-          <CardContent sx={{ textAlign: 'center', py: 6 }}>
-            <CardGiftcardIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
+          <CardContent sx={{ py: 6, textAlign: 'center' }}>
+            <CardGiftcardIcon sx={{ color: 'text.disabled', fontSize: 48, mb: 2 }} />
             <Typography color="text.secondary">No hay beneficios disponibles en este momento.</Typography>
           </CardContent>
         </Card>
       ) : (
         <Grid container spacing={3}>
           {list.map((b) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={b.id}>
-              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <Grid size={{ md: 4, sm: 6, xs: 12 }} key={b.id}>
+              <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                 <CardContent sx={{ flexGrow: 1 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                  <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 1 }}>
                     <Chip
                       label={b.type || 'General'}
                       size="small"
@@ -86,16 +87,16 @@ function Benefits() {
                     {b.name || b.title}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" sx={{
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 4,
+                    display: '-webkit-box',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitLineClamp: 4,
-                    WebkitBoxOrient: 'vertical',
                   }}>
                     {b.description || ''}
                   </Typography>
                   {b.requirements && (
-                    <Typography variant="caption" color="text.disabled" sx={{ mt: 1, display: 'block' }}>
+                    <Typography variant="caption" color="text.disabled" sx={{ display: 'block', mt: 1 }}>
                       Requisitos: {b.requirements}
                     </Typography>
                   )}

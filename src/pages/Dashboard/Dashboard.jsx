@@ -1,16 +1,16 @@
-import { useState, useEffect } from 'react';
-import { useKeycloak } from '@react-keycloak/web';
-import { Box, Grid, Paper, Typography, Card, CardContent, Skeleton, Alert } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import DescriptionIcon from '@mui/icons-material/Description';
 import CampaignIcon from '@mui/icons-material/Campaign';
+import DescriptionIcon from '@mui/icons-material/Description';
+import { Alert, Box, Card, CardContent, Grid, Paper, Skeleton, Typography } from '@mui/material';
+import { useKeycloak } from '@react-keycloak/web';
+import { useEffect, useState } from 'react';
 import { getDashboard } from '../../api/dashboard';
 
 function StatCard({ icon, title, value, color }) {
   return (
     <Card sx={{ height: '100%' }}>
-      <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Paper sx={{ p: 1.5, borderRadius: 2, bgcolor: `${color}15`, color: color }}>
+      <CardContent sx={{ alignItems: 'center', display: 'flex', gap: 2 }}>
+        <Paper sx={{ bgcolor: `${color}15`, borderRadius: 2, color: color, p: 1.5 }}>
           {icon}
         </Paper>
         <Box>
@@ -51,13 +51,13 @@ function Dashboard() {
           No se pudieron cargar los datos del dashboard. Algunas funciones pueden no estar disponibles.
         </Alert>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid size={{ md: 4, sm: 6, xs: 12 }}>
             <StatCard icon={<AssignmentIcon />} title="Solicitudes Pendientes" value="--" color="#ed6c02" />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid size={{ md: 4, sm: 6, xs: 12 }}>
             <StatCard icon={<DescriptionIcon />} title="Documentos Disponibles" value="--" color="#1565c0" />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid size={{ md: 4, sm: 6, xs: 12 }}>
             <StatCard icon={<CampaignIcon />} title="Comunicados Activos" value="--" color="#7b1fa2" />
           </Grid>
         </Grid>
@@ -75,7 +75,7 @@ function Dashboard() {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={{ md: 4, sm: 6, xs: 12 }}>
           {loading ? (
             <Skeleton variant="rounded" height={100} />
           ) : (
@@ -87,7 +87,7 @@ function Dashboard() {
             />
           )}
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={{ md: 4, sm: 6, xs: 12 }}>
           {loading ? (
             <Skeleton variant="rounded" height={100} />
           ) : (
@@ -99,7 +99,7 @@ function Dashboard() {
             />
           )}
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={{ md: 4, sm: 6, xs: 12 }}>
           {loading ? (
             <Skeleton variant="rounded" height={100} />
           ) : (
@@ -112,8 +112,8 @@ function Dashboard() {
           )}
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: 3, borderRadius: 3 }}>
+        <Grid size={{ md: 6, xs: 12 }}>
+          <Paper sx={{ borderRadius: 3, p: 3 }}>
             <Typography variant="h6" fontWeight={600} gutterBottom>
               Comunicados Recientes
             </Typography>
@@ -121,10 +121,10 @@ function Dashboard() {
               <Skeleton variant="rounded" height={200} />
             ) : data?.activeAnnouncements?.length > 0 ? (
               data.activeAnnouncements.slice(0, 3).map((a, i) => (
-                <Paper key={i} variant="outlined" sx={{ p: 2, mb: 1, borderRadius: 2 }}>
+                <Paper key={i} variant="outlined" sx={{ borderRadius: 2, mb: 1, p: 2 }}>
                   <Typography variant="subtitle2" fontWeight={600}>{a.title}</Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {a.body?.length > 120 ? a.body.substring(0, 120) + '...' : a.body}
+                    {a.body?.length > 120 ? `${a.body.substring(0, 120)  }...` : a.body}
                   </Typography>
                   <Typography variant="caption" color="text.disabled">
                     {a.publishedAt ? new Date(a.publishedAt).toLocaleDateString() : ''}
@@ -139,8 +139,8 @@ function Dashboard() {
           </Paper>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: 3, borderRadius: 3 }}>
+        <Grid size={{ md: 6, xs: 12 }}>
+          <Paper sx={{ borderRadius: 3, p: 3 }}>
             <Typography variant="h6" fontWeight={600} gutterBottom>
               Resumen de Beneficios
             </Typography>
@@ -148,10 +148,10 @@ function Dashboard() {
               <Skeleton variant="rounded" height={200} />
             ) : data?.availableBenefits?.length > 0 ? (
               data.availableBenefits.slice(0, 3).map((b, i) => (
-                <Paper key={i} variant="outlined" sx={{ p: 2, mb: 1, borderRadius: 2 }}>
+                <Paper key={i} variant="outlined" sx={{ borderRadius: 2, mb: 1, p: 2 }}>
                   <Typography variant="subtitle2" fontWeight={600}>{b.name}</Typography>
                   <Typography variant="body2" color="text.secondary">
-                    {b.description?.length > 120 ? b.description.substring(0, 120) + '...' : b.description}
+                    {b.description?.length > 120 ? `${b.description.substring(0, 120)  }...` : b.description}
                   </Typography>
                 </Paper>
               ))

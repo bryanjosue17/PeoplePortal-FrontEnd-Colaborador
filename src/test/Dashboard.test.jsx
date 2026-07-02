@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, it, expect, vi } from 'vitest';
+import { expect, it, vi } from 'vitest';
 
 vi.mock('@react-keycloak/web', () => ({
   useKeycloak: () => ({
@@ -43,7 +43,7 @@ it('displays info alert when API fails', async () => {
 
 it('shows stat cards after loading', async () => {
   getDashboard.mockResolvedValue({
-    data: { pendingRequestsCount: 3, recentDocuments: [1,2,3,4,5], activeAnnouncements: [1,2], availableBenefits: [] },
+    data: { activeAnnouncements: [1,2], availableBenefits: [], pendingRequestsCount: 3, recentDocuments: [1,2,3,4,5] },
   });
   await renderDashboard();
   await waitFor(() => {
@@ -55,7 +55,7 @@ it('shows stat cards after loading', async () => {
 
 it('displays correct stat values', async () => {
   getDashboard.mockResolvedValue({
-    data: { pendingRequestsCount: 10, recentDocuments: [1,2,3,4,5], activeAnnouncements: [1,2], availableBenefits: [] },
+    data: { activeAnnouncements: [1,2], availableBenefits: [], pendingRequestsCount: 10, recentDocuments: [1,2,3,4,5] },
   });
   await renderDashboard();
   await waitFor(() => {
@@ -67,7 +67,7 @@ it('displays correct stat values', async () => {
 
 it('shows empty state when no announcements', async () => {
   getDashboard.mockResolvedValue({
-    data: { pendingRequestsCount: 0, recentDocuments: [], activeAnnouncements: [], availableBenefits: [] },
+    data: { activeAnnouncements: [], availableBenefits: [], pendingRequestsCount: 0, recentDocuments: [] },
   });
   await renderDashboard();
   expect(await screen.findByText('No hay comunicados recientes.')).toBeInTheDocument();

@@ -1,31 +1,32 @@
-import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useKeycloak } from '@react-keycloak/web';
-import {
-  AppBar, Box, CssBaseline, Drawer, IconButton, List, ListItem,
-  ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography,
-  Button, Avatar, Menu, MenuItem, Divider
-} from '@mui/material';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import MenuIcon from '@mui/icons-material/Menu';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import PersonIcon from '@mui/icons-material/Person';
-import DescriptionIcon from '@mui/icons-material/Description';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import DescriptionIcon from '@mui/icons-material/Description';
 import LogoutIcon from '@mui/icons-material/Logout';
+import MenuIcon from '@mui/icons-material/Menu';
+import PersonIcon from '@mui/icons-material/Person';
+import {
+  AppBar, Avatar, Box,
+  Divider, Drawer,
+  IconButton, List, ListItem, ListItemButton, ListItemIcon,
+  ListItemText, Menu, MenuItem, Toolbar, Typography
+} from '@mui/material';
+import { useKeycloak } from '@react-keycloak/web';
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const drawerWidth = 260;
 
 const navItems = [
-  { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-  { text: 'Mi Perfil', icon: <PersonIcon />, path: '/profile' },
-  { text: 'Mis Documentos', icon: <DescriptionIcon />, path: '/documents' },
-  { text: 'Solicitudes', icon: <AssignmentIcon />, path: '/requests' },
-  { text: 'Comunicados', icon: <CampaignIcon />, path: '/announcements' },
-  { text: 'Beneficios', icon: <CardGiftcardIcon />, path: '/benefits' },
+  { icon: <DashboardIcon />, path: '/dashboard', text: 'Dashboard' },
+  { icon: <PersonIcon />, path: '/profile', text: 'Mi Perfil' },
+  { icon: <DescriptionIcon />, path: '/documents', text: 'Mis Documentos' },
+  { icon: <AssignmentIcon />, path: '/requests', text: 'Solicitudes' },
+  { icon: <CampaignIcon />, path: '/announcements', text: 'Comunicados' },
+  { icon: <CardGiftcardIcon />, path: '/benefits', text: 'Beneficios' },
 ];
 
 function Layout({ children }) {
@@ -51,7 +52,7 @@ function Layout({ children }) {
   const drawer = (
     <Box>
       <Box sx={{ p: 2, textAlign: 'center' }}>
-        <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
+        <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 700 }}>
           PeoplePortal
         </Typography>
         <Typography variant="caption" color="text.secondary">
@@ -66,13 +67,12 @@ function Layout({ children }) {
               selected={location.pathname === item.path}
               onClick={() => { navigate(item.path); setMobileOpen(false); }}
               sx={{
-                mx: 1, borderRadius: 2, mb: 0.5,
                 '&.Mui-selected': {
+                  '& .MuiListItemIcon-root': { color: 'white' },
+                  '&:hover': { backgroundColor: 'primary.dark' },
                   backgroundColor: 'primary.main',
                   color: 'white',
-                  '&:hover': { backgroundColor: 'primary.dark' },
-                  '& .MuiListItemIcon-root': { color: 'white' },
-                }
+                }, borderRadius: 2, mb: 0.5, mx: 1
               }}
             >
               <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
@@ -89,11 +89,11 @@ function Layout({ children }) {
       <AppBar
         position="fixed"
         sx={{
-          width: { md: `calc(100% - ${drawerWidth}px)` },
-          ml: { md: `${drawerWidth}px` },
           bgcolor: 'white',
-          color: 'text.primary',
           boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+          color: 'text.primary',
+          ml: { md: `${drawerWidth}px` },
+          width: { md: `calc(100% - ${drawerWidth}px)` },
         }}
       >
         <Toolbar>
@@ -101,20 +101,20 @@ function Layout({ children }) {
             color="inherit"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 2, display: { md: 'none' } }}
+            sx={{ display: { md: 'none' }, mr: 2 }}
           >
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
             {navItems.find(i => i.path === location.pathname)?.text || 'PeoplePortal'}
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'block' } }}>
+          <Box sx={{ alignItems: 'center', display: 'flex', gap: 1 }}>
+            <Typography variant="body2" sx={{ display: { sm: 'block', xs: 'none' } }}>
               {userName}
             </Typography>
             <Avatar
               onClick={handleMenuOpen}
-              sx={{ bgcolor: 'primary.main', cursor: 'pointer', width: 36, height: 36, fontSize: 16 }}
+              sx={{ bgcolor: 'primary.main', cursor: 'pointer', fontSize: 16, height: 36, width: 36 }}
             >
               {userAvatar}
             </Avatar>
@@ -122,8 +122,8 @@ function Layout({ children }) {
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               onClose={handleMenuClose}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             >
               <MenuItem disabled>
                 <Typography variant="body2" color="text.secondary">{userEmail}</Typography>
@@ -139,7 +139,7 @@ function Layout({ children }) {
 
       <Box
         component="nav"
-        sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
+        sx={{ flexShrink: { md: 0 }, width: { md: drawerWidth } }}
       >
         <Drawer
           variant="temporary"
@@ -147,8 +147,8 @@ function Layout({ children }) {
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
           sx={{
-            display: { xs: 'block', md: 'none' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            display: { md: 'none', xs: 'block' },
           }}
         >
           {drawer}
@@ -156,8 +156,8 @@ function Layout({ children }) {
         <Drawer
           variant="permanent"
           sx={{
-            display: { xs: 'none', md: 'block' },
             '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            display: { md: 'block', xs: 'none' },
           }}
           open
         >
@@ -168,15 +168,15 @@ function Layout({ children }) {
       <Box
         component="main"
         sx={{
-          flexGrow: 1,
-          p: { xs: 2, sm: 3 },
-          width: { xs: '100%', md: `calc(100% - ${drawerWidth}px)` },
-          minWidth: 0,
-          overflow: 'hidden',
-          minHeight: '100vh',
           bgcolor: 'background.default',
-          mt: 8,
           boxSizing: 'border-box',
+          flexGrow: 1,
+          minHeight: '100vh',
+          minWidth: 0,
+          mt: 8,
+          overflow: 'hidden',
+          p: { sm: 3, xs: 2 },
+          width: { md: `calc(100% - ${drawerWidth}px)`, xs: '100%' },
         }}
       >
         {children}

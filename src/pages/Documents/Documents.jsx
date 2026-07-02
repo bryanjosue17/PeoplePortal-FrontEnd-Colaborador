@@ -1,27 +1,26 @@
-import { useState, useEffect } from 'react';
-import {
-  Box, Paper, Typography, Table, TableBody, TableCell,
-  TableContainer, TableHead, TableRow, Chip, Skeleton, Alert, Card, CardContent
-} from '@mui/material';
 import DescriptionIcon from '@mui/icons-material/Description';
+import {
+  Alert, Box, Card, CardContent, Chip, Paper,
+  Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 import { getMyDocuments } from '../../api/documents';
 
 const statusColors = {
+  Approved: 'success',
   Available: 'success',
   Disponible: 'success',
-  Pending: 'warning',
-  Pendiente: 'warning',
-  Expired: 'error',
   Expirado: 'error',
-  Rejected: 'error',
+  Expired: 'error',
+  InReview: 'warning',
+  Pendiente: 'warning',
+  Pending: 'warning',
   Rechazado: 'error',
-  Approved: 'success',
-  InReview: 'warning'
+  Rejected: 'error'
 };
 
 const statusLabels = {
-  Pending: 'Pendiente', Approved: 'Aprobado', Rejected: 'Rechazado',
-  Available: 'Disponible', InReview: 'En Revisión', Expired: 'Expirado'
+  Approved: 'Aprobado', Available: 'Disponible', Expired: 'Expirado', InReview: 'En Revisión', Pending: 'Pendiente', Rejected: 'Rechazado'
 };
 
 function Documents() {
@@ -68,8 +67,8 @@ function Documents() {
 
       {docs.length === 0 ? (
         <Card>
-          <CardContent sx={{ textAlign: 'center', py: 6 }}>
-            <DescriptionIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
+          <CardContent sx={{ py: 6, textAlign: 'center' }}>
+            <DescriptionIcon sx={{ color: 'text.disabled', fontSize: 48, mb: 2 }} />
             <Typography color="text.secondary">No tienes documentos disponibles.</Typography>
           </CardContent>
         </Card>

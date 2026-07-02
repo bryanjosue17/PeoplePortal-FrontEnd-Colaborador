@@ -1,15 +1,15 @@
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import keycloak from './keycloak';
-import theme from './theme/theme';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
-import Dashboard from './pages/Dashboard/Dashboard';
-import Profile from './pages/Profile/Profile';
-import Documents from './pages/Documents/Documents';
-import Requests from './pages/Requests/Requests';
+import keycloak from './keycloak';
 import Announcements from './pages/Announcements/Announcements';
 import Benefits from './pages/Benefits/Benefits';
+import Dashboard from './pages/Dashboard/Dashboard';
+import Documents from './pages/Documents/Documents';
+import Profile from './pages/Profile/Profile';
+import Requests from './pages/Requests/Requests';
+import theme from './theme/theme';
 
 const eventLogger = (event, error) => {
   if (event === 'onAuthSuccess') {
