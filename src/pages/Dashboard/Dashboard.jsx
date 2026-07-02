@@ -82,7 +82,7 @@ function Dashboard() {
             <StatCard
               icon={<AssignmentIcon />}
               title="Solicitudes Pendientes"
-              value={data?.pendingRequests ?? 0}
+              value={data?.pendingRequestsCount ?? 0}
               color="#ed6c02"
             />
           )}
@@ -94,7 +94,7 @@ function Dashboard() {
             <StatCard
               icon={<DescriptionIcon />}
               title="Documentos Disponibles"
-              value={data?.availableDocuments ?? 0}
+              value={data?.recentDocuments?.length ?? 0}
               color="#1565c0"
             />
           )}
@@ -106,7 +106,7 @@ function Dashboard() {
             <StatCard
               icon={<CampaignIcon />}
               title="Comunicados Activos"
-              value={data?.activeAnnouncements ?? 0}
+              value={data?.activeAnnouncements?.length ?? 0}
               color="#7b1fa2"
             />
           )}
@@ -119,8 +119,8 @@ function Dashboard() {
             </Typography>
             {loading ? (
               <Skeleton variant="rounded" height={200} />
-            ) : data?.recentAnnouncements?.length > 0 ? (
-              data.recentAnnouncements.map((a, i) => (
+            ) : data?.activeAnnouncements?.length > 0 ? (
+              data.activeAnnouncements.slice(0, 3).map((a, i) => (
                 <Paper key={i} variant="outlined" sx={{ p: 2, mb: 1, borderRadius: 2 }}>
                   <Typography variant="subtitle2" fontWeight={600}>{a.title}</Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -146,8 +146,8 @@ function Dashboard() {
             </Typography>
             {loading ? (
               <Skeleton variant="rounded" height={200} />
-            ) : data?.activeBenefits?.length > 0 ? (
-              data.activeBenefits.map((b, i) => (
+            ) : data?.availableBenefits?.length > 0 ? (
+              data.availableBenefits.slice(0, 3).map((b, i) => (
                 <Paper key={i} variant="outlined" sx={{ p: 2, mb: 1, borderRadius: 2 }}>
                   <Typography variant="subtitle2" fontWeight={600}>{b.name}</Typography>
                   <Typography variant="body2" color="text.secondary">
