@@ -15,6 +15,13 @@ const statusColors = {
   Expirado: 'error',
   Rejected: 'error',
   Rechazado: 'error',
+  Approved: 'success',
+  InReview: 'warning'
+};
+
+const statusLabels = {
+  Pending: 'Pendiente', Approved: 'Aprobado', Rejected: 'Rechazado',
+  Available: 'Disponible', InReview: 'En Revisión', Expired: 'Expirado'
 };
 
 function Documents() {
@@ -86,7 +93,7 @@ function Documents() {
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={doc.status || 'Pending'}
+                      label={statusLabels[doc.status] ?? (doc.status || 'Pendiente')}
                       size="small"
                       color={statusColors[doc.status] || 'default'}
                     />

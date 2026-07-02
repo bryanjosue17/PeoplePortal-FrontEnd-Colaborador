@@ -17,6 +17,12 @@ const statusColors = {
   Rejected: 'error', Rechazado: 'error',
   Cancelled: 'default', Cancelado: 'default',
   Pending: 'warning', Pendiente: 'warning',
+  InReview: 'warning'
+};
+
+const statusLabels = {
+  Submitted: 'Enviado', InReview: 'En Revisión', Approved: 'Aprobado',
+  Rejected: 'Rechazado', Cancelled: 'Cancelado', Pending: 'Pendiente'
 };
 
 const getTomorrow = () => {
@@ -287,7 +293,7 @@ function Requests() {
                             </Typography>
                           </TableCell>
                           <TableCell>
-                            <Chip label={r.status || 'Pending'} size="small" color={statusColors[r.status] || 'default'} />
+                            <Chip label={statusLabels[r.status] ?? (r.status || 'Pendiente')} size="small" color={statusColors[r.status] || 'default'} />
                           </TableCell>
                           <TableCell>
                             {(r.status === 'Submitted' || r.status === 'Enviado' || r.status === 'Pending' || r.status === 'Pendiente') && (
