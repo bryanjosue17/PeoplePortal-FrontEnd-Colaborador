@@ -7,6 +7,7 @@ import { CustomThemeProvider } from './context/ThemeContext';
 import keycloak from './keycloak';
 import Announcements from './pages/Announcements/Announcements';
 import Benefits from './pages/Benefits/Benefits';
+import Nomina from './pages/Nomina/Nomina';
 import Dashboard from './pages/Dashboard/Dashboard';
 import Documents from './pages/Documents/Documents';
 import Profile from './pages/Profile/Profile';
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/requests" element={<Requests />} />
                 <Route path="/announcements" element={<Announcements />} />
                 <Route path="/benefits" element={<Benefits />} />
+                <Route path="/nomina" element={<Nomina />} />
                 <Route path="/team-requests" element={<TeamRequests />} />
               </Routes>
             </Layout>

@@ -8,6 +8,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import GroupIcon from '@mui/icons-material/Group';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
@@ -34,6 +35,7 @@ const baseNavItems = [
   { icon: <AssignmentIcon />, path: '/requests', text: 'Solicitudes' },
   { icon: <CampaignIcon />, path: '/announcements', text: 'Comunicados' },
   { icon: <CardGiftcardIcon />, path: '/benefits', text: 'Beneficios' },
+  { icon: <MonetizationOnIcon />, path: '/nomina', text: 'Nómina' },
 ];
 
 function Layout({ children }) {
