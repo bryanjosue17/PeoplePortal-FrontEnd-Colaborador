@@ -5,12 +5,14 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import DescriptionIcon from '@mui/icons-material/Description';
+import GroupIcon from '@mui/icons-material/Group';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import {
-  AppBar, Avatar, Box,
+  AppBar, Avatar, Badge, Box,
   Divider, Drawer,
   IconButton, List, ListItem, ListItemButton, ListItemIcon,
   ListItemText, Menu, MenuItem, Toolbar, Typography
@@ -20,11 +22,12 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useNotifications } from '../context/NotificationsContext';
 import { useThemeContext } from '../context/ThemeContext';
 
 const drawerWidth = 260;
 
-const navItems = [
+const baseNavItems = [
   { icon: <DashboardIcon />, path: '/dashboard', text: 'Dashboard' },
   { icon: <PersonIcon />, path: '/profile', text: 'Mi Perfil' },
   { icon: <DescriptionIcon />, path: '/documents', text: 'Mis Documentos' },
@@ -39,9 +42,19 @@ function Layout({ children }) {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-  
+
   const { themeMode, toggleThemeMode } = useThemeContext();
   const [themeAnchorEl, setThemeAnchorEl] = useState(null);
+  const { unreadCount, clearUnread } = useNotifications();
+
+  // Detect jefe_inmediato role
+  const roles = keycloak?.tokenParsed?.realm_access?.roles || [];
+  const isManager = roles.includes('jefe_inmediato');
+
+  const navItems = [
+    ...baseNavItems,
+    ...(isManager ? [{ icon: <GroupIcon />, path: '/team-requests', text: 'Mi Equipo' }] : []),
+  ];
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
@@ -136,6 +149,16 @@ function Layout({ children }) {
             {navItems.find(i => i.path === location.pathname)?.text || 'PeoplePortal'}
           </Typography>
           <Box sx={{ alignItems: 'center', display: 'flex', gap: 1 }}>
+            <IconButton
+              color="inherit"
+              sx={{ color: 'text.secondary' }}
+              onClick={() => { clearUnread(); navigate('/requests'); }}
+              title="Mis solicitudes"
+            >
+              <Badge badgeContent={unreadCount > 0 ? unreadCount : null} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
             <IconButton color="inherit" onClick={handleThemeMenuOpen} sx={{ mr: 1, color: 'text.secondary' }}>
               {getThemeIcon()}
             </IconButton>

@@ -1,5 +1,6 @@
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import CampaignIcon from '@mui/icons-material/Campaign';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { Alert, Box, Card, CardContent, Grid, Paper, Skeleton, Typography } from '@mui/material';
 import { alpha } from '@mui/material/styles';
@@ -55,12 +56,13 @@ function Dashboard() {
   if (error) {
     return (
       <>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          Bienvenido, {userName}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Panel de control del colaborador
-        </Typography>
+        <Box sx={{ alignItems: 'center', display: 'flex', gap: 1.5, mb: 3 }}>
+          <DashboardIcon color="primary" sx={{ fontSize: 32 }} />
+          <Box>
+            <Typography variant="h5" fontWeight={600}>Bienvenido, {userName}</Typography>
+            <Typography variant="body2" color="text.secondary">Panel de control del colaborador</Typography>
+          </Box>
+        </Box>
         <Alert severity="info" sx={{ mb: 3 }}>
           No se pudieron cargar los datos del dashboard. Algunas funciones pueden no estar disponibles.
         </Alert>
@@ -81,12 +83,13 @@ function Dashboard() {
 
   return (
     <>
-      <Typography variant="h5" fontWeight={600} gutterBottom>
-        Bienvenido, {userName}
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Panel de control del colaborador
-      </Typography>
+      <Box sx={{ alignItems: 'center', display: 'flex', gap: 1.5, mb: 3 }}>
+        <DashboardIcon color="primary" sx={{ fontSize: 32 }} />
+        <Box>
+          <Typography variant="h5" fontWeight={600}>Bienvenido, {userName}</Typography>
+          <Typography variant="body2" color="text.secondary">Panel de control del colaborador</Typography>
+        </Box>
+      </Box>
 
       <Grid container spacing={3}>
         <Grid size={{ md: 4, sm: 6, xs: 12 }}>

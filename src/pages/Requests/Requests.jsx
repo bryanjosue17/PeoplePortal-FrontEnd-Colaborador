@@ -1,9 +1,11 @@
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SendIcon from '@mui/icons-material/Send';
 import {
   Box, Button, Card, CardContent, Chip, FormControl, Grid,
   InputLabel, MenuItem, Paper, Select, Skeleton, Tab, Table,
-  TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography
+  TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination,
+  Tabs, TextField, Typography
 } from '@mui/material';
 import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
@@ -179,10 +181,13 @@ function RequestForm({ type, onSubmit, loading }) {
 
 function Requests() {
   const [tab, setTab] = useState(0);
-  const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState(null);
+  const [requests, setRequests]       = useState([]);
+  const [loading, setLoading]         = useState(true);
+  const [submitting, setSubmitting]   = useState(false);
+  const [error, setError]             = useState(null);
+  const [statusFilter, setStatusFilter] = useState('');
+  const [page, setPage]               = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const loadRequests = () => {
     setLoading(true);
@@ -223,17 +228,24 @@ function Requests() {
   const tabs = ['Vacaciones', 'Constancias', 'Vouchers'];
 
   const reqList = Array.isArray(requests) ? requests : (requests?.content || []);
-  const filteredReqs = reqList.filter(r => {
+  const tabFiltered = reqList.filter(r => {
     const type = r.type?.toLowerCase() || r.requestType?.toLowerCase() || '';
     if (tab === 0) {return type === 'vacation' || type === 'vacaciones';}
     if (tab === 1) {return type === 'certificate' || type === 'constancia' || type === 'constancias';}
     if (tab === 2) {return type === 'voucher' || type === 'vale' || type === 'vouchers';}
     return true;
   });
+  const filteredReqs = statusFilter
+    ? tabFiltered.filter(r => r.status === statusFilter)
+    : tabFiltered;
+  const paginatedReqs = filteredReqs.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <Box>
-      <Typography variant="h5" fontWeight={600} gutterBottom>Solicitudes</Typography>
+      <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
+        <AssignmentIcon color="primary" />
+        <Typography variant="h5" fontWeight={600}>Solicitudes</Typography>
+      </Box>
 
       <Paper sx={{ borderRadius: 3 }}>
         <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ pt: 1, px: 2 }}>
@@ -248,6 +260,19 @@ function Requests() {
               <Typography variant="h6" fontWeight={600} gutterBottom>
                 Mis {tabs[i]}
               </Typography>
+
+              <Box sx={{ mb: 2 }}>
+                <TextField select size="small" label="Filtrar por estado" value={statusFilter}
+                  onChange={e => { setStatusFilter(e.target.value); setPage(0); }}
+                  sx={{ minWidth: 180 }}>
+                  <MenuItem value="">Todos los estados</MenuItem>
+                  <MenuItem value="Submitted">Enviado</MenuItem>
+                  <MenuItem value="InReview">En Revisión</MenuItem>
+                  <MenuItem value="Approved">Aprobado</MenuItem>
+                  <MenuItem value="Rejected">Rechazado</MenuItem>
+                  <MenuItem value="Cancelled">Cancelado</MenuItem>
+                </TextField>
+              </Box>
 
               {loading ? (
                 <Card>
@@ -264,6 +289,7 @@ function Requests() {
                   </CardContent>
                 </Card>
               ) : (
+                <>
                 <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2, overflowX: 'auto' }}>
                   <Table size="small">
                     <TableHead>
@@ -275,7 +301,7 @@ function Requests() {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {filteredReqs.map(r => (
+                      {paginatedReqs.map(r => (
                         <TableRow key={r.id} hover>
                           <TableCell>{r.createdAtUtc ? new Date(r.createdAtUtc).toLocaleDateString('es-GT') : '-'}</TableCell>
                           <TableCell>
@@ -302,6 +328,19 @@ function Requests() {
                     </TableBody>
                   </Table>
                 </TableContainer>
+                {filteredReqs.length > rowsPerPage && (
+                  <TablePagination
+                    component="div"
+                    count={filteredReqs.length}
+                    page={page}
+                    onPageChange={(_, p) => setPage(p)}
+                    rowsPerPage={rowsPerPage}
+                    onRowsPerPageChange={e => { setRowsPerPage(parseInt(e.target.value, 10)); setPage(0); }}
+                    rowsPerPageOptions={[5, 10, 25]}
+                    labelRowsPerPage="Por página:"
+                  />
+                )}
+                </>
               )}
             </TabPanel>
           ))}

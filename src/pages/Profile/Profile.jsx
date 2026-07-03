@@ -1,3 +1,4 @@
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import BadgeIcon from '@mui/icons-material/Badge';
 import BusinessIcon from '@mui/icons-material/Business';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -77,7 +78,10 @@ function Profile() {
   if (loading) {
     return (
       <Box>
-        <Typography variant="h5" fontWeight={600} gutterBottom>Mi Perfil</Typography>
+        <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
+          <AccountCircleIcon color="primary" />
+          <Typography variant="h5" fontWeight={600}>Mi Perfil</Typography>
+        </Box>
         <Grid container spacing={3}>
           <Grid size={{ md: 4, xs: 12 }}>
             <Skeleton variant="rounded" height={300} />
@@ -94,7 +98,10 @@ function Profile() {
 
   return (
     <Box>
-      <Typography variant="h5" fontWeight={600} gutterBottom>Mi Perfil</Typography>
+      <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
+        <AccountCircleIcon color="primary" />
+        <Typography variant="h5" fontWeight={600}>Mi Perfil</Typography>
+      </Box>
 
       <Grid container spacing={3}>
         <Grid size={{ md: 4, xs: 12 }}>
