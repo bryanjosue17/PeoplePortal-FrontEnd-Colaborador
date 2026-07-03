@@ -1,4 +1,6 @@
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -6,6 +8,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import PersonIcon from '@mui/icons-material/Person';
+import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import {
   AppBar, Avatar, Box,
   Divider, Drawer,
@@ -17,6 +20,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useThemeContext } from '../context/ThemeContext';
 
 const drawerWidth = 260;
 
@@ -35,6 +39,9 @@ function Layout({ children }) {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  
+  const { themeMode, toggleThemeMode } = useThemeContext();
+  const [themeAnchorEl, setThemeAnchorEl] = useState(null);
 
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
   const handleMenuOpen = (e) => setAnchorEl(e.currentTarget);
@@ -42,6 +49,19 @@ function Layout({ children }) {
   const handleLogout = () => {
     handleMenuClose();
     keycloak.logout();
+  };
+
+  const handleThemeMenuOpen = (e) => setThemeAnchorEl(e.currentTarget);
+  const handleThemeMenuClose = () => setThemeAnchorEl(null);
+  const handleThemeSelect = (mode) => {
+    toggleThemeMode(mode);
+    handleThemeMenuClose();
+  };
+
+  const getThemeIcon = () => {
+    if (themeMode === 'light') return <Brightness7Icon />;
+    if (themeMode === 'dark') return <Brightness4Icon />;
+    return <SettingsBrightnessIcon />;
   };
 
   const token = keycloak?.tokenParsed;
@@ -109,6 +129,28 @@ function Layout({ children }) {
             {navItems.find(i => i.path === location.pathname)?.text || 'PeoplePortal'}
           </Typography>
           <Box sx={{ alignItems: 'center', display: 'flex', gap: 1 }}>
+            <IconButton color="inherit" onClick={handleThemeMenuOpen} sx={{ mr: 1, color: 'text.secondary' }}>
+              {getThemeIcon()}
+            </IconButton>
+            <Menu
+              anchorEl={themeAnchorEl}
+              open={Boolean(themeAnchorEl)}
+              onClose={handleThemeMenuClose}
+            >
+              <MenuItem onClick={() => handleThemeSelect('light')} selected={themeMode === 'light'}>
+                <ListItemIcon><Brightness7Icon fontSize="small" /></ListItemIcon>
+                Claro
+              </MenuItem>
+              <MenuItem onClick={() => handleThemeSelect('dark')} selected={themeMode === 'dark'}>
+                <ListItemIcon><Brightness4Icon fontSize="small" /></ListItemIcon>
+                Oscuro
+              </MenuItem>
+              <MenuItem onClick={() => handleThemeSelect('system')} selected={themeMode === 'system'}>
+                <ListItemIcon><SettingsBrightnessIcon fontSize="small" /></ListItemIcon>
+                Sistema
+              </MenuItem>
+            </Menu>
+
             <Typography variant="body2" sx={{ display: { sm: 'block', xs: 'none' } }}>
               {userName}
             </Typography>

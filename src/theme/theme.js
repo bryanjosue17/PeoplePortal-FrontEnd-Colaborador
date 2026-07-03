@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 
-const theme = createTheme({
+export const getTheme = (mode) => createTheme({
   components: {
     MuiCard: {
       styleOverrides: {
@@ -9,13 +9,12 @@ const theme = createTheme({
     }
   },
   palette: {
-    background: { default: '#f5f5f5' },
-    primary: { main: '#1565c0' },
-    secondary: { main: '#7b1fa2' }
+    mode,
+    background: { default: mode === 'dark' ? '#121212' : '#f5f5f5' },
+    primary: { main: mode === 'dark' ? '#90caf9' : '#1565c0' },
+    secondary: { main: mode === 'dark' ? '#ce93d8' : '#7b1fa2' }
   },
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
   }
 });
-
-export default theme;

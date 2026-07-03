@@ -1,7 +1,8 @@
-import { CssBaseline, ThemeProvider } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
+import { CustomThemeProvider } from './context/ThemeContext';
 import keycloak from './keycloak';
 import Announcements from './pages/Announcements/Announcements';
 import Benefits from './pages/Benefits/Benefits';
@@ -9,7 +10,6 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import Documents from './pages/Documents/Documents';
 import Profile from './pages/Profile/Profile';
 import Requests from './pages/Requests/Requests';
-import theme from './theme/theme';
 
 const eventLogger = (event, error) => {
   if (event === 'onAuthSuccess') {
@@ -20,7 +20,7 @@ const eventLogger = (event, error) => {
 function App() {
   return (
     <ReactKeycloakProvider authClient={keycloak} onEvent={eventLogger} initOptions={{ onLoad: 'login-required', pkceMethod: 'S256' }}>
-      <ThemeProvider theme={theme}>
+      <CustomThemeProvider>
         <CssBaseline />
         <BrowserRouter>
           <Layout>
@@ -35,7 +35,7 @@ function App() {
             </Routes>
           </Layout>
         </BrowserRouter>
-      </ThemeProvider>
+      </CustomThemeProvider>
     </ReactKeycloakProvider>
   );
 }
