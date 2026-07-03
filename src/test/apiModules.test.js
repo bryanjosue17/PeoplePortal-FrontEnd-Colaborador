@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const apiClientMock = {
   get: vi.fn(),
@@ -59,9 +59,9 @@ describe('API modules - FrontEnd Colaborador', () => {
       cancelRequest,
     } = await import('../api/requests');
 
-    const vacation = { startDate: '2026-07-01', endDate: '2026-07-03', reason: 'Vacaciones' };
+    const vacation = { endDate: '2026-07-03', reason: 'Vacaciones', startDate: '2026-07-01' };
     const certificate = { certificateType: 'Trabajo', reason: 'Banco' };
-    const voucher = { period: 'Junio', year: '2026', reason: 'Tramite' };
+    const voucher = { period: 'Junio', reason: 'Tramite', year: '2026' };
 
     getMyRequests();
     createVacation(vacation);

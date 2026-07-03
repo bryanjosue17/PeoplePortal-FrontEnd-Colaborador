@@ -1,28 +1,51 @@
-﻿import { useState, useEffect } from 'react';
-import {
-  Box, Paper, Typography, TextField, Button, Select, MenuItem, FormControl,
-  InputLabel, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
-  Chip, Tabs, Tab, Card, CardContent, Grid, Alert, Skeleton
-} from '@mui/material';
-import { toast } from 'react-toastify';
-import SendIcon from '@mui/icons-material/Send';
 import CancelIcon from '@mui/icons-material/Cancel';
+import SendIcon from '@mui/icons-material/Send';
+import {
+  Box, Button, Card, CardContent, Chip, FormControl, Grid,
+  InputLabel, MenuItem, Paper, Select, Skeleton, Tab, Table,
+  TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, Typography
+} from '@mui/material';
 import { useFormik } from 'formik';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import * as yup from 'yup';
-import { getMyRequests, createVacation, createCertificate, createVoucher, cancelRequest } from '../../api/requests';
+import { cancelRequest, createCertificate, createVacation, createVoucher, getMyRequests } from '../../api/requests';
 
 const statusColors = {
-  Submitted: 'info', Enviado: 'info',
-  Approved: 'success', Aprobado: 'success',
-  Rejected: 'error', Rechazado: 'error',
-  Cancelled: 'default', Cancelado: 'default',
-  Pending: 'warning', Pendiente: 'warning',
+  Approved: 'success', Aprobado: 'success', Cancelado: 'default', Cancelled: 'default', Enviado: 'info', InReview: 'warning', Pendiente: 'warning', Pending: 'warning', Rechazado: 'error', Rejected: 'error', Submitted: 'info'
+};
+
+const statusLabels = {
+  Approved: 'Aprobado', Cancelled: 'Cancelado', InReview: 'En Revisión', Pending: 'Pendiente', Rejected: 'Rechazado', Submitted: 'Enviado'
+};
+
+const getTomorrow = () => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().split('T')[0];
 };
 
 const vacationSchema = yup.object({
-  startDate: yup.string().required('Requerido'),
-  endDate: yup.string().required('Requerido'),
+  endDate: yup
+    .string()
+    .required('Requerido')
+    .test('min-date', 'La fecha de fin debe ser a partir de mañana', (val) => {
+      if (!val) return false;
+      return val >= getTomorrow();
+    })
+    .test('after-start', 'La fecha de fin debe ser igual o posterior al inicio', function (val) {
+      const { startDate } = this.parent;
+      if (!val || !startDate) return true;
+      return val >= startDate;
+    }),
   reason: yup.string().required('Requerido'),
+  startDate: yup
+    .string()
+    .required('Requerido')
+    .test('min-date', 'La fecha de inicio debe ser a partir de mañana', (val) => {
+      if (!val) return false;
+      return val >= getTomorrow();
+    }),
 });
 
 const certificateSchema = yup.object({
@@ -33,30 +56,30 @@ const certificateSchema = yup.object({
 
 const voucherSchema = yup.object({
   period: yup.string().required('Requerido'),
-  year: yup.string().required('Requerido'),
   reason: yup.string().required('Requerido'),
+  year: yup.string().required('Requerido'),
 });
 
 function TabPanel({ children, value, index }) {
-  return value === index ? <Box sx={{ px: 3, pb: 3, pt: 2 }}>{children}</Box> : null;
+  return value === index ? <Box sx={{ pb: 3, pt: 2, px: 3 }}>{children}</Box> : null;
 }
 
 function RequestForm({ type, onSubmit, loading }) {
-  const schemas = { vacation: vacationSchema, certificate: certificateSchema, voucher: voucherSchema };
-  const initial = { vacation: { startDate: '', endDate: '', reason: '' }, certificate: { certificateType: '', estimatedDate: '', reason: '' }, voucher: { period: '', year: '', reason: '' } };
+  const schemas = { certificate: certificateSchema, vacation: vacationSchema, voucher: voucherSchema };
+  const initial = { certificate: { certificateType: '', estimatedDate: '', reason: '' }, vacation: { endDate: '', reason: '', startDate: '' }, voucher: { period: '', reason: '', year: '' } };
 
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: initial[type] || {},
-    validationSchema: schemas[type],
     onSubmit: (values) => {
       onSubmit(values);
       formik.resetForm();
     },
-    enableReinitialize: true,
+    validationSchema: schemas[type],
   });
 
   return (
-    <Card sx={{ p: 3, mb: 3 }}>
+    <Card sx={{ mb: 3, p: 3 }}>
       <Typography variant="h6" fontWeight={600} gutterBottom>
         Nueva Solicitud de {type === 'vacation' ? 'Vacaciones' : type === 'certificate' ? 'Constancia' : 'Voucher'}
       </Typography>
@@ -64,25 +87,25 @@ function RequestForm({ type, onSubmit, loading }) {
         <Grid container spacing={2}>
           {type === 'vacation' && (
             <>
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Grid size={{ sm: 6, xs: 12 }}>
                 <TextField fullWidth label="Fecha de Inicio" type="date" name="startDate"
                   value={formik.values.startDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.startDate && Boolean(formik.errors.startDate)}
                   helperText={formik.touched.startDate && formik.errors.startDate}
-                  required slotProps={{ inputLabel: { shrink: true } }} />
+                  required slotProps={{ htmlInput: { min: getTomorrow() }, inputLabel: { shrink: true } }} />
               </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Grid size={{ sm: 6, xs: 12 }}>
                 <TextField fullWidth label="Fecha de Fin" type="date" name="endDate"
                   value={formik.values.endDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.endDate && Boolean(formik.errors.endDate)}
                   helperText={formik.touched.endDate && formik.errors.endDate}
-                  required slotProps={{ inputLabel: { shrink: true } }} />
+                  required slotProps={{ htmlInput: { min: formik.values.startDate || getTomorrow() }, inputLabel: { shrink: true } }} />
               </Grid>
             </>
           )}
           {type === 'certificate' && (
             <>
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Grid size={{ sm: 6, xs: 12 }}>
                 <FormControl fullWidth required error={formik.touched.certificateType && Boolean(formik.errors.certificateType)}>
                   <InputLabel>Tipo de Constancia</InputLabel>
                   <Select name="certificateType" value={formik.values.certificateType} onChange={formik.handleChange}
@@ -97,7 +120,7 @@ function RequestForm({ type, onSubmit, loading }) {
                   <Typography variant="caption" color="error">{formik.errors.certificateType}</Typography>
                 )}
               </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Grid size={{ sm: 6, xs: 12 }}>
                 <TextField fullWidth label="Fecha Estimada" type="date" name="estimatedDate"
                   value={formik.values.estimatedDate} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   slotProps={{ inputLabel: { shrink: true } }} />
@@ -106,7 +129,7 @@ function RequestForm({ type, onSubmit, loading }) {
           )}
           {type === 'voucher' && (
             <>
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Grid size={{ sm: 6, xs: 12 }}>
                 <FormControl fullWidth required error={formik.touched.period && Boolean(formik.errors.period)}>
                   <InputLabel>Periodo</InputLabel>
                   <Select name="period" value={formik.values.period} onChange={formik.handleChange}
@@ -129,7 +152,7 @@ function RequestForm({ type, onSubmit, loading }) {
                   <Typography variant="caption" color="error">{formik.errors.period}</Typography>
                 )}
               </Grid>
-              <Grid size={{ xs: 12, sm: 6 }}>
+              <Grid size={{ sm: 6, xs: 12 }}>
                 <TextField fullWidth label="Año" type="number" name="year"
                   value={formik.values.year} onChange={formik.handleChange} onBlur={formik.handleBlur}
                   error={formik.touched.year && Boolean(formik.errors.year)}
@@ -174,9 +197,9 @@ function Requests() {
   const handleCreate = async (type, data) => {
     setSubmitting(true);
     try {
-      if (type === 'vacation') await createVacation(data);
-      else if (type === 'certificate') await createCertificate(data);
-      else if (type === 'voucher') await createVoucher(data);
+      if (type === 'vacation') {await createVacation(data);}
+      else if (type === 'certificate') {await createCertificate(data);}
+      else if (type === 'voucher') {await createVoucher({ ...data, period: `${data.period} ${data.year}` });}
       toast.success('Solicitud creada exitosamente');
       loadRequests();
     } catch (err) {
@@ -202,9 +225,9 @@ function Requests() {
   const reqList = Array.isArray(requests) ? requests : (requests?.content || []);
   const filteredReqs = reqList.filter(r => {
     const type = r.type?.toLowerCase() || r.requestType?.toLowerCase() || '';
-    if (tab === 0) return type === 'vacation' || type === 'vacaciones';
-    if (tab === 1) return type === 'certificate' || type === 'constancia' || type === 'constancias';
-    if (tab === 2) return type === 'voucher' || type === 'vale' || type === 'vouchers';
+    if (tab === 0) {return type === 'vacation' || type === 'vacaciones';}
+    if (tab === 1) {return type === 'certificate' || type === 'constancia' || type === 'constancias';}
+    if (tab === 2) {return type === 'voucher' || type === 'vale' || type === 'vouchers';}
     return true;
   });
 
@@ -213,7 +236,7 @@ function Requests() {
       <Typography variant="h5" fontWeight={600} gutterBottom>Solicitudes</Typography>
 
       <Paper sx={{ borderRadius: 3 }}>
-        <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ px: 2, pt: 1 }}>
+        <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ pt: 1, px: 2 }}>
           {tabs.map(t => <Tab key={t} label={t} />)}
         </Tabs>
 
@@ -236,7 +259,7 @@ function Requests() {
                 </Card>
               ) : filteredReqs.length === 0 ? (
                 <Card>
-                  <CardContent sx={{ textAlign: 'center', py: 4 }}>
+                  <CardContent sx={{ py: 4, textAlign: 'center' }}>
                     <Typography color="text.secondary">No hay solicitudes de {tabs[i].toLowerCase()}.</Typography>
                   </CardContent>
                 </Card>
@@ -244,7 +267,7 @@ function Requests() {
                 <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2, overflowX: 'auto' }}>
                   <Table size="small">
                     <TableHead>
-                      <TableRow sx={{ bgcolor: 'grey.50' }}>
+                      <TableRow>
                         <TableCell sx={{ fontWeight: 600 }}>Fecha</TableCell>
                         <TableCell sx={{ fontWeight: 600 }}>Detalle</TableCell>
                         <TableCell sx={{ fontWeight: 600 }}>Estado</TableCell>
@@ -254,17 +277,17 @@ function Requests() {
                     <TableBody>
                       {filteredReqs.map(r => (
                         <TableRow key={r.id} hover>
-                          <TableCell>{new Date(r.createdAt || r.submittedAt).toLocaleDateString()}</TableCell>
+                          <TableCell>{r.createdAtUtc ? new Date(r.createdAtUtc).toLocaleDateString('es-GT') : '-'}</TableCell>
                           <TableCell>
                             {r.reason || r.startDate
-                              ? `${r.startDate || ''} ${r.endDate ? '- ' + r.endDate : ''} ${r.certificateType || r.period || ''} ${r.year || ''}`
+                              ? `${r.startDate || ''} ${r.endDate ? `- ${  r.endDate}` : ''} ${r.certificateType || r.period || ''} ${r.year || ''}`
                               : 'Sin detalle'}
                             <Typography variant="caption" display="block" color="text.secondary">
                               {r.reason?.substring(0, 60)}
                             </Typography>
                           </TableCell>
                           <TableCell>
-                            <Chip label={r.status || 'Pending'} size="small" color={statusColors[r.status] || 'default'} />
+                            <Chip label={statusLabels[r.status] ?? (r.status || 'Pendiente')} size="small" color={statusColors[r.status] || 'default'} />
                           </TableCell>
                           <TableCell>
                             {(r.status === 'Submitted' || r.status === 'Enviado' || r.status === 'Pending' || r.status === 'Pendiente') && (

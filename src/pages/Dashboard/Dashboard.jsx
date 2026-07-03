@@ -1,18 +1,32 @@
-import { useState, useEffect } from 'react';
-import { useKeycloak } from '@react-keycloak/web';
-import { Box, Grid, Paper, Typography, Card, CardContent, Skeleton, Alert } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import DescriptionIcon from '@mui/icons-material/Description';
 import CampaignIcon from '@mui/icons-material/Campaign';
+import DescriptionIcon from '@mui/icons-material/Description';
+import { Alert, Box, Card, CardContent, Grid, Paper, Skeleton, Typography } from '@mui/material';
+import { alpha } from '@mui/material/styles';
+import { useKeycloak } from '@react-keycloak/web';
+import { useEffect, useState } from 'react';
 import { getDashboard } from '../../api/dashboard';
 
 function StatCard({ icon, title, value, color }) {
   return (
-    <Card sx={{ height: '100%' }}>
-      <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Paper sx={{ p: 1.5, borderRadius: 2, bgcolor: `${color}15`, color: color }}>
+    <Card sx={{
+      borderLeft: `3px solid ${color}`,
+      height: '100%',
+      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+      '&:hover': { transform: 'translateY(-2px)' },
+    }}>
+      <CardContent sx={{ alignItems: 'center', display: 'flex', gap: 2 }}>
+        <Box sx={{
+          alignItems: 'center',
+          bgcolor: alpha(color, 0.12),
+          borderRadius: 2,
+          color,
+          display: 'flex',
+          justifyContent: 'center',
+          p: 1.5,
+        }}>
           {icon}
-        </Paper>
+        </Box>
         <Box>
           <Typography variant="h4" fontWeight={700}>{value}</Typography>
           <Typography variant="body2" color="text.secondary">{title}</Typography>
@@ -51,13 +65,13 @@ function Dashboard() {
           No se pudieron cargar los datos del dashboard. Algunas funciones pueden no estar disponibles.
         </Alert>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid size={{ md: 4, sm: 6, xs: 12 }}>
             <StatCard icon={<AssignmentIcon />} title="Solicitudes Pendientes" value="--" color="#ed6c02" />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid size={{ md: 4, sm: 6, xs: 12 }}>
             <StatCard icon={<DescriptionIcon />} title="Documentos Disponibles" value="--" color="#1565c0" />
           </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid size={{ md: 4, sm: 6, xs: 12 }}>
             <StatCard icon={<CampaignIcon />} title="Comunicados Activos" value="--" color="#7b1fa2" />
           </Grid>
         </Grid>
@@ -75,61 +89,70 @@ function Dashboard() {
       </Typography>
 
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={{ md: 4, sm: 6, xs: 12 }}>
           {loading ? (
             <Skeleton variant="rounded" height={100} />
           ) : (
             <StatCard
               icon={<AssignmentIcon />}
               title="Solicitudes Pendientes"
-              value={data?.pendingRequests ?? 0}
+              value={data?.pendingRequestsCount ?? 0}
               color="#ed6c02"
             />
           )}
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={{ md: 4, sm: 6, xs: 12 }}>
           {loading ? (
             <Skeleton variant="rounded" height={100} />
           ) : (
             <StatCard
               icon={<DescriptionIcon />}
               title="Documentos Disponibles"
-              value={data?.availableDocuments ?? 0}
+              value={data?.recentDocuments?.length ?? 0}
               color="#1565c0"
             />
           )}
         </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={{ md: 4, sm: 6, xs: 12 }}>
           {loading ? (
             <Skeleton variant="rounded" height={100} />
           ) : (
             <StatCard
               icon={<CampaignIcon />}
               title="Comunicados Activos"
-              value={data?.activeAnnouncements ?? 0}
+              value={data?.activeAnnouncements?.length ?? 0}
               color="#7b1fa2"
             />
           )}
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: 3, borderRadius: 3 }}>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
+        <Grid size={{ md: 6, xs: 12 }}>
+          <Paper sx={{ borderRadius: 3, p: 3 }}>
+            <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
               Comunicados Recientes
             </Typography>
             {loading ? (
               <Skeleton variant="rounded" height={200} />
-            ) : data?.recentAnnouncements?.length > 0 ? (
-              data.recentAnnouncements.map((a, i) => (
-                <Paper key={i} variant="outlined" sx={{ p: 2, mb: 1, borderRadius: 2 }}>
+            ) : data?.activeAnnouncements?.length > 0 ? (
+              data.activeAnnouncements.slice(0, 3).map((a, i) => (
+                <Box key={i} sx={{
+                  borderLeft: '3px solid',
+                  borderLeftColor: 'primary.main',
+                  borderRadius: '0 8px 8px 0',
+                  mb: 1.5,
+                  p: 2,
+                  bgcolor: 'action.hover',
+                  transition: 'background-color 0.2s',
+                  '&:hover': { bgcolor: 'action.selected' },
+                }}>
                   <Typography variant="subtitle2" fontWeight={600}>{a.title}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {a.body?.length > 120 ? a.body.substring(0, 120) + '...' : a.body}
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    {a.body?.length > 120 ? `${a.body.substring(0, 120)}...` : a.body}
                   </Typography>
-                  <Typography variant="caption" color="text.disabled">
+                  <Typography variant="caption" color="text.disabled" sx={{ display: 'block', mt: 0.5 }}>
                     {a.publishedAt ? new Date(a.publishedAt).toLocaleDateString() : ''}
                   </Typography>
-                </Paper>
+                </Box>
               ))
             ) : (
               <Typography variant="body2" color="text.secondary">
@@ -139,21 +162,30 @@ function Dashboard() {
           </Paper>
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: 3, borderRadius: 3 }}>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
+        <Grid size={{ md: 6, xs: 12 }}>
+          <Paper sx={{ borderRadius: 3, p: 3 }}>
+            <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
               Resumen de Beneficios
             </Typography>
             {loading ? (
               <Skeleton variant="rounded" height={200} />
-            ) : data?.activeBenefits?.length > 0 ? (
-              data.activeBenefits.map((b, i) => (
-                <Paper key={i} variant="outlined" sx={{ p: 2, mb: 1, borderRadius: 2 }}>
+            ) : data?.availableBenefits?.length > 0 ? (
+              data.availableBenefits.slice(0, 3).map((b, i) => (
+                <Box key={i} sx={{
+                  borderLeft: '3px solid',
+                  borderLeftColor: 'secondary.main',
+                  borderRadius: '0 8px 8px 0',
+                  mb: 1.5,
+                  p: 2,
+                  bgcolor: 'action.hover',
+                  transition: 'background-color 0.2s',
+                  '&:hover': { bgcolor: 'action.selected' },
+                }}>
                   <Typography variant="subtitle2" fontWeight={600}>{b.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {b.description?.length > 120 ? b.description.substring(0, 120) + '...' : b.description}
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    {b.description?.length > 120 ? `${b.description.substring(0, 120)}...` : b.description}
                   </Typography>
-                </Paper>
+                </Box>
               ))
             ) : (
               <Typography variant="body2" color="text.secondary">
