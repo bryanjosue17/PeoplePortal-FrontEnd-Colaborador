@@ -5,7 +5,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import SaveIcon from '@mui/icons-material/Save';
-import { Alert, Avatar, Box, Button, Card, Chip, Divider, Grid, Skeleton, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, Chip, Divider, Grid, Skeleton, TextField, Typography } from '@mui/material';
 import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -99,18 +99,32 @@ function Profile() {
       <Grid container spacing={3}>
         <Grid size={{ md: 4, xs: 12 }}>
           <Card sx={{ p: 3, textAlign: 'center' }}>
-            <Avatar sx={{ bgcolor: 'primary.main', fontSize: 32, height: 80, mb: 2, mx: 'auto', width: 80 }}>
+            <Box sx={{
+              alignItems: 'center',
+              background: 'linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%)',
+              borderRadius: '50%',
+              color: '#fff',
+              display: 'flex',
+              fontSize: 40,
+              fontWeight: 700,
+              height: 90,
+              justifyContent: 'center',
+              mb: 2,
+              mx: 'auto',
+              width: 90,
+              boxShadow: '0 8px 24px rgba(96,165,250,0.35)',
+            }}>
               {(profile?.firstName?.charAt(0) || 'U').toUpperCase()}
-            </Avatar>
-            <Typography variant="h6" fontWeight={600}>{fullName}</Typography>
+            </Box>
+            <Typography variant="h6" fontWeight={700}>{fullName}</Typography>
             <Chip label={profile?.status || 'Activo'} color={profile?.status === 'Activo' ? 'success' : 'default'} size="small" sx={{ mt: 1 }} />
             <Divider sx={{ my: 2 }} />
             <Box sx={{ textAlign: 'left' }}>
-              <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 1 }}>
+              <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 1.5 }}>
                 <BadgeIcon fontSize="small" color="primary" />
                 <Typography variant="body2">{profile?.documentType || ''}: {profile?.documentNumber || ''}</Typography>
               </Box>
-              <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 1 }}>
+              <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 1.5 }}>
                 <EmailIcon fontSize="small" color="primary" />
                 <Typography variant="body2">{profile?.email || ''}</Typography>
               </Box>

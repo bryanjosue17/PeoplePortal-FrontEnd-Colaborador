@@ -267,7 +267,7 @@ function Requests() {
                 <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2, overflowX: 'auto' }}>
                   <Table size="small">
                     <TableHead>
-                      <TableRow sx={{ bgcolor: 'grey.50' }}>
+                      <TableRow>
                         <TableCell sx={{ fontWeight: 600 }}>Fecha</TableCell>
                         <TableCell sx={{ fontWeight: 600 }}>Detalle</TableCell>
                         <TableCell sx={{ fontWeight: 600 }}>Estado</TableCell>

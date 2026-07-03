@@ -59,7 +59,14 @@ function Announcements() {
         <Grid container spacing={3}>
           {list.map((a) => (
             <Grid size={{ md: 4, sm: 6, xs: 12 }} key={a.id}>
-              <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <Card sx={{
+                borderTop: `3px solid ${a.type === 'Urgente' || a.type === 'Important' ? '#f44336' : '#60A5FA'}`,
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                '&:hover': { transform: 'translateY(-2px)' },
+              }}>
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 1 }}>
                     <Chip

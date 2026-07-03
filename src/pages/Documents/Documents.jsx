@@ -76,7 +76,7 @@ function Documents() {
         <TableContainer component={Paper} sx={{ borderRadius: 3, overflowX: 'auto' }}>
           <Table>
             <TableHead>
-              <TableRow sx={{ bgcolor: 'grey.50' }}>
+              <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>Nombre</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Tipo</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Estado</TableCell>

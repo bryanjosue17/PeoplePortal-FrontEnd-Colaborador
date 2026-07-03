@@ -70,30 +70,40 @@ function Layout({ children }) {
   const userAvatar = userName.charAt(0).toUpperCase();
 
   const drawer = (
-    <Box>
-      <Box sx={{ p: 2, textAlign: 'center' }}>
-        <Typography variant="h6" sx={{ color: 'primary.main', fontWeight: 700 }}>
-          PeoplePortal
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          Colaborador
-        </Typography>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Box sx={{ alignItems: 'center', display: 'flex', gap: 1.5, p: 2.5, pb: 2 }}>
+        <Box
+          sx={{
+            alignItems: 'center',
+            background: 'linear-gradient(135deg, #60A5FA, #3B82F6)',
+            borderRadius: 2,
+            color: '#fff',
+            display: 'flex',
+            fontSize: 18,
+            fontWeight: 800,
+            height: 36,
+            justifyContent: 'center',
+            width: 36,
+          }}
+        >
+          P
+        </Box>
+        <Box>
+          <Typography variant="subtitle1" sx={{ color: 'text.primary', fontWeight: 700, lineHeight: 1.2 }}>
+            PeoplePortal
+          </Typography>
+          <Typography variant="caption" color="text.secondary" sx={{ letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            Colaborador
+          </Typography>
+        </Box>
       </Box>
       <Divider />
-      <List>
+      <List sx={{ flexGrow: 1, pt: 1 }}>
         {navItems.map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton
               selected={location.pathname === item.path}
               onClick={() => { navigate(item.path); setMobileOpen(false); }}
-              sx={{
-                '&.Mui-selected': {
-                  '& .MuiListItemIcon-root': { color: 'white' },
-                  '&:hover': { backgroundColor: 'primary.dark' },
-                  backgroundColor: 'primary.main',
-                  color: 'white',
-                }, borderRadius: 2, mb: 0.5, mx: 1
-              }}
             >
               <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
@@ -109,9 +119,6 @@ function Layout({ children }) {
       <AppBar
         position="fixed"
         sx={{
-          bgcolor: 'white',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-          color: 'text.primary',
           ml: { md: `${drawerWidth}px` },
           width: { md: `calc(100% - ${drawerWidth}px)` },
         }}

@@ -2,17 +2,31 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import DescriptionIcon from '@mui/icons-material/Description';
 import { Alert, Box, Card, CardContent, Grid, Paper, Skeleton, Typography } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { useKeycloak } from '@react-keycloak/web';
 import { useEffect, useState } from 'react';
 import { getDashboard } from '../../api/dashboard';
 
 function StatCard({ icon, title, value, color }) {
   return (
-    <Card sx={{ height: '100%' }}>
+    <Card sx={{
+      borderLeft: `3px solid ${color}`,
+      height: '100%',
+      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+      '&:hover': { transform: 'translateY(-2px)' },
+    }}>
       <CardContent sx={{ alignItems: 'center', display: 'flex', gap: 2 }}>
-        <Paper sx={{ bgcolor: `${color}15`, borderRadius: 2, color: color, p: 1.5 }}>
+        <Box sx={{
+          alignItems: 'center',
+          bgcolor: alpha(color, 0.12),
+          borderRadius: 2,
+          color,
+          display: 'flex',
+          justifyContent: 'center',
+          p: 1.5,
+        }}>
           {icon}
-        </Paper>
+        </Box>
         <Box>
           <Typography variant="h4" fontWeight={700}>{value}</Typography>
           <Typography variant="body2" color="text.secondary">{title}</Typography>
@@ -114,22 +128,31 @@ function Dashboard() {
 
         <Grid size={{ md: 6, xs: 12 }}>
           <Paper sx={{ borderRadius: 3, p: 3 }}>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
+            <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
               Comunicados Recientes
             </Typography>
             {loading ? (
               <Skeleton variant="rounded" height={200} />
             ) : data?.activeAnnouncements?.length > 0 ? (
               data.activeAnnouncements.slice(0, 3).map((a, i) => (
-                <Paper key={i} variant="outlined" sx={{ borderRadius: 2, mb: 1, p: 2 }}>
+                <Box key={i} sx={{
+                  borderLeft: '3px solid',
+                  borderLeftColor: 'primary.main',
+                  borderRadius: '0 8px 8px 0',
+                  mb: 1.5,
+                  p: 2,
+                  bgcolor: 'action.hover',
+                  transition: 'background-color 0.2s',
+                  '&:hover': { bgcolor: 'action.selected' },
+                }}>
                   <Typography variant="subtitle2" fontWeight={600}>{a.title}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {a.body?.length > 120 ? `${a.body.substring(0, 120)  }...` : a.body}
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    {a.body?.length > 120 ? `${a.body.substring(0, 120)}...` : a.body}
                   </Typography>
-                  <Typography variant="caption" color="text.disabled">
+                  <Typography variant="caption" color="text.disabled" sx={{ display: 'block', mt: 0.5 }}>
                     {a.publishedAt ? new Date(a.publishedAt).toLocaleDateString() : ''}
                   </Typography>
-                </Paper>
+                </Box>
               ))
             ) : (
               <Typography variant="body2" color="text.secondary">
@@ -141,19 +164,28 @@ function Dashboard() {
 
         <Grid size={{ md: 6, xs: 12 }}>
           <Paper sx={{ borderRadius: 3, p: 3 }}>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
+            <Typography variant="h6" fontWeight={600} sx={{ mb: 2 }}>
               Resumen de Beneficios
             </Typography>
             {loading ? (
               <Skeleton variant="rounded" height={200} />
             ) : data?.availableBenefits?.length > 0 ? (
               data.availableBenefits.slice(0, 3).map((b, i) => (
-                <Paper key={i} variant="outlined" sx={{ borderRadius: 2, mb: 1, p: 2 }}>
+                <Box key={i} sx={{
+                  borderLeft: '3px solid',
+                  borderLeftColor: 'secondary.main',
+                  borderRadius: '0 8px 8px 0',
+                  mb: 1.5,
+                  p: 2,
+                  bgcolor: 'action.hover',
+                  transition: 'background-color 0.2s',
+                  '&:hover': { bgcolor: 'action.selected' },
+                }}>
                   <Typography variant="subtitle2" fontWeight={600}>{b.name}</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {b.description?.length > 120 ? `${b.description.substring(0, 120)  }...` : b.description}
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    {b.description?.length > 120 ? `${b.description.substring(0, 120)}...` : b.description}
                   </Typography>
-                </Paper>
+                </Box>
               ))
             ) : (
               <Typography variant="body2" color="text.secondary">
