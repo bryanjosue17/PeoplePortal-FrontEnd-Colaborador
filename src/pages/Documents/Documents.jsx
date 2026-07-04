@@ -2,7 +2,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import SearchIcon from '@mui/icons-material/Search';
 import {
   Alert, Box, Card, CardContent, Chip, InputAdornment, Paper,
-  Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography
+  Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, TextField, Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { getMyDocuments } from '../../api/documents';
@@ -29,6 +29,8 @@ function Documents() {
   const [loading, setLoading]     = useState(true);
   const [error, setError]         = useState(null);
   const [search, setSearch]       = useState('');
+  const [page, setPage]           = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     getMyDocuments()
@@ -74,6 +76,7 @@ function Documents() {
         (d.type || d.documentType || '').toLowerCase().includes(search.toLowerCase())
       )
     : docs;
+  const paginated = filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <Box>
@@ -85,7 +88,7 @@ function Documents() {
       <Box sx={{ mb: 2 }}>
         <TextField
           fullWidth size="small" placeholder="Buscar por nombre o tipo..."
-          value={search} onChange={e => setSearch(e.target.value)}
+          value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
           slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: 'text.disabled' }} /></InputAdornment> } }}
         />
       </Box>
@@ -98,7 +101,8 @@ function Documents() {
           </CardContent>
         </Card>
       ) : (
-        <TableContainer component={Paper} sx={{ borderRadius: 3, overflowX: 'auto' }}>
+        <>
+          <TableContainer component={Paper} sx={{ borderRadius: 3, overflowX: 'auto' }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -109,7 +113,7 @@ function Documents() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {filtered.map((doc) => (
+              {paginated.map((doc) => (
                 <TableRow key={doc.id} hover>
                   <TableCell>{doc.name || doc.fileName || 'Sin nombre'}</TableCell>
                   <TableCell>
@@ -134,6 +138,19 @@ function Documents() {
             </TableBody>
           </Table>
         </TableContainer>
+        {filtered.length > rowsPerPage && (
+          <TablePagination
+            component="div"
+            count={filtered.length}
+            page={page}
+            onPageChange={(_, p) => setPage(p)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={e => { setRowsPerPage(parseInt(e.target.value, 10)); setPage(0); }}
+            rowsPerPageOptions={[10, 25, 50]}
+            labelRowsPerPage="Por página:"
+          />
+        )}
+        </>
       )}
     </Box>
   );
