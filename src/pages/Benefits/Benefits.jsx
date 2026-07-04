@@ -30,7 +30,10 @@ function Benefits() {
   if (loading) {
     return (
       <Box>
-        <Typography variant="h5" fontWeight={600} gutterBottom>Beneficios</Typography>
+        <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
+          <CardGiftcardIcon color="primary" />
+          <Typography variant="h5" fontWeight={600}>Beneficios</Typography>
+        </Box>
         <Grid container spacing={3}>
           {[...Array(4)].map((_, i) => (
             <Grid size={{ md: 4, sm: 6, xs: 12 }} key={i}>
@@ -45,7 +48,10 @@ function Benefits() {
   if (error) {
     return (
       <Box>
-        <Typography variant="h5" fontWeight={600} gutterBottom>Beneficios</Typography>
+        <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
+          <CardGiftcardIcon color="primary" />
+          <Typography variant="h5" fontWeight={600}>Beneficios</Typography>
+        </Box>
         <Alert severity="error">Error al cargar beneficios: {error}</Alert>
       </Box>
     );
@@ -55,7 +61,10 @@ function Benefits() {
 
   return (
     <Box>
-      <Typography variant="h5" fontWeight={600} gutterBottom>Beneficios</Typography>
+      <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
+        <CardGiftcardIcon color="primary" />
+        <Typography variant="h5" fontWeight={600}>Beneficios</Typography>
+      </Box>
 
       {list.length === 0 ? (
         <Card>

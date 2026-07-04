@@ -21,7 +21,10 @@ function Announcements() {
   if (loading) {
     return (
       <Box>
-        <Typography variant="h5" fontWeight={600} gutterBottom>Comunicados</Typography>
+        <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
+          <CampaignIcon color="primary" />
+          <Typography variant="h5" fontWeight={600}>Comunicados</Typography>
+        </Box>
         <Grid container spacing={3}>
           {[...Array(4)].map((_, i) => (
             <Grid size={{ md: 4, sm: 6, xs: 12 }} key={i}>
@@ -36,7 +39,10 @@ function Announcements() {
   if (error) {
     return (
       <Box>
-        <Typography variant="h5" fontWeight={600} gutterBottom>Comunicados</Typography>
+        <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
+          <CampaignIcon color="primary" />
+          <Typography variant="h5" fontWeight={600}>Comunicados</Typography>
+        </Box>
         <Alert severity="error">Error al cargar comunicados: {error}</Alert>
       </Box>
     );
@@ -46,7 +52,10 @@ function Announcements() {
 
   return (
     <Box>
-      <Typography variant="h5" fontWeight={600} gutterBottom>Comunicados</Typography>
+      <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
+        <CampaignIcon color="primary" />
+        <Typography variant="h5" fontWeight={600}>Comunicados</Typography>
+      </Box>
 
       {list.length === 0 ? (
         <Card>

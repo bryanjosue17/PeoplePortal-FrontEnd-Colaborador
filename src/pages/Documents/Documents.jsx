@@ -1,7 +1,8 @@
 import DescriptionIcon from '@mui/icons-material/Description';
+import SearchIcon from '@mui/icons-material/Search';
 import {
-  Alert, Box, Card, CardContent, Chip, Paper,
-  Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography
+  Alert, Box, Card, CardContent, Chip, InputAdornment, Paper,
+  Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, TextField, Typography
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { getMyDocuments } from '../../api/documents';
@@ -25,8 +26,11 @@ const statusLabels = {
 
 function Documents() {
   const [documents, setDocuments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading]     = useState(true);
+  const [error, setError]         = useState(null);
+  const [search, setSearch]       = useState('');
+  const [page, setPage]           = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     getMyDocuments()
@@ -38,7 +42,10 @@ function Documents() {
   if (loading) {
     return (
       <Box>
-        <Typography variant="h5" fontWeight={600} gutterBottom>Mis Documentos</Typography>
+        <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
+          <DescriptionIcon color="primary" />
+          <Typography variant="h5" fontWeight={600}>Mis Documentos</Typography>
+        </Box>
         <Card>
           <CardContent>
             {[...Array(3)].map((_, i) => (
@@ -53,27 +60,49 @@ function Documents() {
   if (error) {
     return (
       <Box>
-        <Typography variant="h5" fontWeight={600} gutterBottom>Mis Documentos</Typography>
+        <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
+          <DescriptionIcon color="primary" />
+          <Typography variant="h5" fontWeight={600}>Mis Documentos</Typography>
+        </Box>
         <Alert severity="error">Error al cargar documentos: {error}</Alert>
       </Box>
     );
   }
 
   const docs = Array.isArray(documents) ? documents : (documents?.content || []);
+  const filtered = search
+    ? docs.filter(d =>
+        (d.name || d.fileName || '').toLowerCase().includes(search.toLowerCase()) ||
+        (d.type || d.documentType || '').toLowerCase().includes(search.toLowerCase())
+      )
+    : docs;
+  const paginated = filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <Box>
-      <Typography variant="h5" fontWeight={600} gutterBottom>Mis Documentos</Typography>
+      <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
+        <DescriptionIcon color="primary" />
+        <Typography variant="h5" fontWeight={600}>Mis Documentos</Typography>
+      </Box>
 
-      {docs.length === 0 ? (
+      <Box sx={{ mb: 2 }}>
+        <TextField
+          fullWidth size="small" placeholder="Buscar por nombre o tipo..."
+          value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
+          slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: 'text.disabled' }} /></InputAdornment> } }}
+        />
+      </Box>
+
+      {filtered.length === 0 ? (
         <Card>
           <CardContent sx={{ py: 6, textAlign: 'center' }}>
             <DescriptionIcon sx={{ color: 'text.disabled', fontSize: 48, mb: 2 }} />
-            <Typography color="text.secondary">No tienes documentos disponibles.</Typography>
+            <Typography color="text.secondary">{search ? 'No se encontraron documentos con ese criterio.' : 'No tienes documentos disponibles.'}</Typography>
           </CardContent>
         </Card>
       ) : (
-        <TableContainer component={Paper} sx={{ borderRadius: 3, overflowX: 'auto' }}>
+        <>
+          <TableContainer component={Paper} sx={{ borderRadius: 3, overflowX: 'auto' }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -84,7 +113,7 @@ function Documents() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {docs.map((doc) => (
+              {paginated.map((doc) => (
                 <TableRow key={doc.id} hover>
                   <TableCell>{doc.name || doc.fileName || 'Sin nombre'}</TableCell>
                   <TableCell>
@@ -109,6 +138,19 @@ function Documents() {
             </TableBody>
           </Table>
         </TableContainer>
+        {filtered.length > rowsPerPage && (
+          <TablePagination
+            component="div"
+            count={filtered.length}
+            page={page}
+            onPageChange={(_, p) => setPage(p)}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={e => { setRowsPerPage(parseInt(e.target.value, 10)); setPage(0); }}
+            rowsPerPageOptions={[10, 25, 50]}
+            labelRowsPerPage="Por página:"
+          />
+        )}
+        </>
       )}
     </Box>
   );

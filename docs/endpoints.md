@@ -34,6 +34,25 @@ Base URL: configurada por `VITE_API_URL` (vacío = misma origin).
 
 ---
 
+## Mi Equipo (jefe_inmediato)
+
+> Estos endpoints solo están disponibles cuando el usuario tiene el rol `jefe_inmediato` en Keycloak.
+
+| Método | Ruta | Página | Descripción |
+|---|---|---|---|
+| `GET` | `/api/manager/requests` | TeamRequests | Listar solicitudes del equipo propio |
+| `PATCH` | `/api/manager/requests/:id/status` | TeamRequests | Aprobar o rechazar solicitud de un colaborador |
+
+---
+
+## Vouchers de pago
+
+| Método | Ruta | Página | Descripción |
+|---|---|---|---|
+| `GET` | `/api/vouchers/me` | (dashboard) | Consultar mis vouchers de pago cargados por nómina |
+
+---
+
 ## Documentos
 
 | Método | Ruta | Página | Descripción |
