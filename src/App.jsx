@@ -22,7 +22,7 @@ const eventLogger = (event, error) => {
 
 function App() {
   return (
-    <ReactKeycloakProvider authClient={keycloak} onEvent={eventLogger} initOptions={{ onLoad: 'login-required', pkceMethod: 'S256' }}>
+    <ReactKeycloakProvider authClient={keycloak} onEvent={eventLogger} initOptions={{ onLoad: 'login-required', pkceMethod: 'S256', checkLoginIframe: false }}>
       <CustomThemeProvider>
         <CssBaseline />
         <BrowserRouter>
