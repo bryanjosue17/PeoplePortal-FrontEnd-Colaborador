@@ -1,5 +1,5 @@
 import { CssBaseline } from '@mui/material';
-import { ReactKeycloakProvider } from '@react-keycloak/web';
+import { useKeycloak, ReactKeycloakProvider } from '@react-keycloak/web';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Layout from './components/Layout';
 import { NotificationsProvider } from './context/NotificationsContext';
@@ -25,6 +25,14 @@ const eventLogger = (event, error) => {
   }
 };
 
+// Bloquea el render de rutas hasta que keycloak.authenticated === true
+// Evita llamadas API sin token durante el ciclo PKCE inicial
+function AuthGuard({ children }) {
+  const { keycloak, initialized } = useKeycloak();
+  if (!initialized || !keycloak.authenticated) return null;
+  return children;
+}
+
 function App() {
   return (
     <ReactKeycloakProvider authClient={keycloak} onEvent={eventLogger} initOptions={{ onLoad: 'login-required', pkceMethod: 'S256', checkLoginIframe: false }}>
@@ -32,19 +40,21 @@ function App() {
         <CssBaseline />
         <BrowserRouter>
           <NotificationsProvider>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/documents" element={<Documents />} />
-                <Route path="/requests" element={<Requests />} />
-                <Route path="/announcements" element={<Announcements />} />
-                <Route path="/benefits" element={<Benefits />} />
-                <Route path="/nomina" element={<Nomina />} />
-                <Route path="/team-requests" element={<TeamRequests />} />
-              </Routes>
-            </Layout>
+            <AuthGuard>
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/documents" element={<Documents />} />
+                  <Route path="/requests" element={<Requests />} />
+                  <Route path="/announcements" element={<Announcements />} />
+                  <Route path="/benefits" element={<Benefits />} />
+                  <Route path="/nomina" element={<Nomina />} />
+                  <Route path="/team-requests" element={<TeamRequests />} />
+                </Routes>
+              </Layout>
+            </AuthGuard>
           </NotificationsProvider>
         </BrowserRouter>
       </CustomThemeProvider>
