@@ -55,6 +55,7 @@ function Profile() {
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCancel = () => {

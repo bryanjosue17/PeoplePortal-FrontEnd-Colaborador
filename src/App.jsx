@@ -14,7 +14,7 @@ import Profile from './pages/Profile/Profile';
 import Requests from './pages/Requests/Requests';
 import TeamRequests from './pages/TeamRequests/TeamRequests';
 
-const eventLogger = (event, error) => {
+const eventLogger = (event, _error) => {
   if (event === 'onAuthSuccess' || event === 'onTokenRefreshed' || event === 'onAuthRefreshSuccess') {
     if (keycloak.token) {
       sessionStorage.setItem('keycloak-token', keycloak.token);

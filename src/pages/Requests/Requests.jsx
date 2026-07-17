@@ -184,7 +184,7 @@ function Requests() {
   const [requests, setRequests]       = useState([]);
   const [loading, setLoading]         = useState(true);
   const [submitting, setSubmitting]   = useState(false);
-  const [error, setError]             = useState(null);
+  const [_error, setError]             = useState(null);
   const [statusFilter, setStatusFilter] = useState('');
   const [page, setPage]               = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
