@@ -81,8 +81,17 @@ function RequestForm({ type, onSubmit, loading }) {
   });
 
   return (
-    <Card sx={{ mb: 3, p: 3 }}>
-      <Typography variant="h6" fontWeight={600} gutterBottom>
+    <Card sx={{
+      mb: 3,
+      p: 3.5,
+      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%)',
+      backdropFilter: 'blur(12px)',
+      border: '1px solid',
+      borderColor: 'divider',
+      borderTop: '4px solid #3B82F6',
+      borderRadius: 3,
+    }}>
+      <Typography variant="h6" fontWeight={700} gutterBottom sx={{ color: 'primary.main' }}>
         Nueva Solicitud de {type === 'vacation' ? 'Vacaciones' : type === 'certificate' ? 'Constancia' : 'Voucher'}
       </Typography>
       <Box component="form" onSubmit={formik.handleSubmit}>
@@ -242,12 +251,44 @@ function Requests() {
 
   return (
     <Box>
-      <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
-        <AssignmentIcon color="primary" />
-        <Typography variant="h5" fontWeight={600}>Solicitudes</Typography>
-      </Box>
+      {/* Glassmorphic Header Banner */}
+      <Paper
+        elevation={0}
+        sx={{
+          background: 'linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(139,92,246,0.06) 100%)',
+          backdropFilter: 'blur(16px)',
+          borderRadius: 3,
+          mb: 4,
+          p: { xs: 2.5, md: 3.5 },
+          position: 'relative',
+          overflow: 'hidden',
+          border: '1px solid',
+          borderColor: 'divider',
+          borderLeft: '5px solid #3B82F6',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative', zIndex: 1 }}>
+          <Box sx={{ p: 1.5, borderRadius: 2.5, background: 'linear-gradient(135deg, #3B82F6, #60A5FA)', color: '#fff', display: 'flex', boxShadow: '0 6px 16px rgba(59,130,246,0.3)' }}>
+            <AssignmentIcon fontSize="medium" />
+          </Box>
+          <Box>
+            <Typography variant="h4" fontWeight={800}>Mis Solicitudes</Typography>
+            <Typography variant="body2" color="text.secondary">Gestiona tus peticiones de vacaciones, constancias laborales y vales</Typography>
+          </Box>
+        </Box>
+        <Box sx={{
+          position: 'absolute', right: -40, top: -40, width: 220, height: 220, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(255,255,255,0) 70%)', zIndex: 0
+        }} />
+      </Paper>
 
-      <Paper sx={{ borderRadius: 3 }}>
+      <Paper elevation={0} sx={{
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)',
+        backdropFilter: 'blur(12px)',
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 3
+      }}>
         <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ pt: 1, px: 2 }}>
           {tabs.map(t => <Tab key={t} label={t} />)}
         </Tabs>
@@ -290,7 +331,14 @@ function Requests() {
                 </Card>
               ) : (
                 <>
-                <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2, overflowX: 'auto' }}>
+                <TableContainer component={Paper} elevation={0} sx={{
+                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%)',
+                  backdropFilter: 'blur(12px)',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  borderRadius: 2,
+                  overflowX: 'auto',
+                }}>
                   <Table size="small">
                     <TableHead>
                       <TableRow>

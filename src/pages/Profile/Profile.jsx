@@ -6,12 +6,16 @@ import EditIcon from '@mui/icons-material/Edit';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import SaveIcon from '@mui/icons-material/Save';
-import { Alert, Box, Button, Card, Chip, Divider, Grid, Skeleton, TextField, Typography } from '@mui/material';
+import WorkIcon from '@mui/icons-material/Work';
+import SecurityIcon from '@mui/icons-material/Security';
+import { Alert, Box, Button, Card, Chip, Divider, Grid, Skeleton, TextField, Typography, Paper } from '@mui/material';
 import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import * as yup from 'yup';
 import { getMyProfile, updateMyProfile } from '../../api/employees';
+import { useAuth } from '../../context/AuthContext';
+import DiceAvatar from '../../components/DiceAvatar';
 
 const validationSchema = yup.object({
   emergencyContact: yup.string(),
@@ -21,6 +25,7 @@ const validationSchema = yup.object({
 });
 
 function Profile() {
+  const { user } = useAuth(); // keycloak parsed token
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -79,122 +84,199 @@ function Profile() {
   if (loading) {
     return (
       <Box>
-        <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
-          <AccountCircleIcon color="primary" />
-          <Typography variant="h5" fontWeight={600}>Mi Perfil</Typography>
-        </Box>
         <Grid container spacing={3}>
-          <Grid size={{ md: 4, xs: 12 }}>
-            <Skeleton variant="rounded" height={300} />
+          <Grid size={12}>
+            <Skeleton variant="rounded" height={150} />
           </Grid>
-        <Grid size={{ md: 8, xs: 12 }}>
-            <Skeleton variant="rounded" height={300} />
+          <Grid size={{ md: 4, xs: 12 }}>
+            <Skeleton variant="rounded" height={400} />
+          </Grid>
+          <Grid size={{ md: 8, xs: 12 }}>
+            <Skeleton variant="rounded" height={400} />
           </Grid>
         </Grid>
       </Box>
     );
   }
 
-  const fullName = `${profile?.firstName || ''} ${profile?.lastName || ''}`.trim() || profile?.email || 'Usuario';
+  const fullName = `${profile?.firstName || ''} ${profile?.lastName || ''}`.trim() || user?.name || user?.preferred_username || 'Usuario';
+  const displayEmail = profile?.email || user?.email || '';
+  const roles = user?.realm_access?.roles?.filter(r => !['offline_access', 'uma_authorization', 'default-roles-peopleportal'].includes(r)) || [];
 
   return (
     <Box>
-      <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
-        <AccountCircleIcon color="primary" />
-        <Typography variant="h5" fontWeight={600}>Mi Perfil</Typography>
-      </Box>
+      {/* Banner Superior */}
+      <Paper
+        elevation={0}
+        sx={{
+          background: 'linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(96,165,250,0.05) 100%)',
+          borderRadius: 3,
+          mb: 4,
+          p: { xs: 3, md: 5 },
+          position: 'relative',
+          overflow: 'hidden',
+          border: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: 'center', gap: 3, position: 'relative', zIndex: 1 }}>
+          <Box sx={{ p: 0.5, borderRadius: '50%', background: 'linear-gradient(135deg, #3B82F6, #8B5CF6)', boxShadow: '0 8px 24px rgba(59,130,246,0.25)' }}>
+            <DiceAvatar seed={displayEmail} size={120} sx={{ border: '4px solid', borderColor: 'background.paper' }} />
+          </Box>
+          <Box sx={{ textAlign: { xs: 'center', sm: 'left' } }}>
+            <Typography variant="h3" fontWeight={800} sx={{ mb: 1 }}>
+              {fullName}
+            </Typography>
+            <Typography variant="h6" color="text.secondary" fontWeight={400} sx={{ mb: 2 }}>
+              {profile?.position || 'Colaborador'}
+            </Typography>
+            <Chip 
+              icon={<SecurityIcon />} 
+              label={profile?.status || 'Activo'} 
+              color={profile?.status === 'Activo' ? 'success' : 'default'} 
+              variant="outlined"
+              sx={{ fontWeight: 600 }}
+            />
+          </Box>
+        </Box>
+        
+        {/* Background Decorative Element */}
+        <Box sx={{
+          position: 'absolute', right: -50, top: -50, width: 300, height: 300, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, rgba(255,255,255,0) 70%)', zIndex: 0
+        }} />
+      </Paper>
 
       <Grid container spacing={3}>
+        {/* Información de Cuenta (Izquierda) */}
         <Grid size={{ md: 4, xs: 12 }}>
-          <Card sx={{ p: 3, textAlign: 'center' }}>
-            <Box sx={{
-              alignItems: 'center',
-              background: 'linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%)',
-              borderRadius: '50%',
-              color: '#fff',
-              display: 'flex',
-              fontSize: 40,
-              fontWeight: 700,
-              height: 90,
-              justifyContent: 'center',
-              mb: 2,
-              mx: 'auto',
-              width: 90,
-              boxShadow: '0 8px 24px rgba(96,165,250,0.35)',
-            }}>
-              {(profile?.firstName?.charAt(0) || 'U').toUpperCase()}
+          <Card sx={{ p: 3, height: '100%', borderRadius: 3 }}>
+            <Typography variant="h6" fontWeight={700} sx={{ mb: 3 }}>Detalles de Cuenta</Typography>
+            <Divider sx={{ mb: 3 }} />
+            
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <BadgeIcon color="primary" sx={{ opacity: 0.8 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary">Documento ({profile?.documentType || 'ID'})</Typography>
+                  <Typography variant="body1" fontWeight={500}>{profile?.documentNumber || 'No registrado'}</Typography>
+                </Box>
+              </Box>
+              
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <EmailIcon color="primary" sx={{ opacity: 0.8 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary">Correo Electrónico</Typography>
+                  <Typography variant="body1" fontWeight={500}>{displayEmail}</Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <WorkIcon color="primary" sx={{ opacity: 0.8 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary">Departamento</Typography>
+                  <Typography variant="body1" fontWeight={500}>{profile?.department || 'General'}</Typography>
+                </Box>
+              </Box>
+              
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <BusinessIcon color="primary" sx={{ opacity: 0.8 }} />
+                <Box>
+                  <Typography variant="caption" color="text.secondary">Sede / Ubicación</Typography>
+                  <Typography variant="body1" fontWeight={500}>{profile?.site || 'No asignada'}</Typography>
+                </Box>
+              </Box>
             </Box>
-            <Typography variant="h6" fontWeight={700}>{fullName}</Typography>
-            <Chip label={profile?.status || 'Activo'} color={profile?.status === 'Activo' ? 'success' : 'default'} size="small" sx={{ mt: 1 }} />
-            <Divider sx={{ my: 2 }} />
-            <Box sx={{ textAlign: 'left' }}>
-              <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 1.5 }}>
-                <BadgeIcon fontSize="small" color="primary" />
-                <Typography variant="body2">{profile?.documentType || ''}: {profile?.documentNumber || ''}</Typography>
-              </Box>
-              <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 1.5 }}>
-                <EmailIcon fontSize="small" color="primary" />
-                <Typography variant="body2">{profile?.email || ''}</Typography>
-              </Box>
-              <Box sx={{ alignItems: 'center', display: 'flex', gap: 1 }}>
-                <BusinessIcon fontSize="small" color="primary" />
-                <Typography variant="body2">{profile?.site || 'No asignado'}</Typography>
-              </Box>
+
+            <Typography variant="subtitle2" fontWeight={700} sx={{ mt: 4, mb: 2, color: 'text.secondary', textTransform: 'uppercase' }}>
+              Roles en Sistema
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {roles.length > 0 ? roles.map(r => (
+                <Chip key={r} label={r} size="small" sx={{ borderRadius: 1 }} />
+              )) : (
+                <Typography variant="body2" color="text.disabled">Sin roles asignados</Typography>
+              )}
             </Box>
           </Card>
         </Grid>
 
+        {/* Contacto y Emergencia (Derecha) */}
         <Grid size={{ md: 8, xs: 12 }}>
-          <Card sx={{ p: 3 }}>
+          <Card sx={{ p: 3, borderRadius: 3, height: '100%' }}>
             <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-              <Typography variant="h6" fontWeight={600}>Información de Contacto</Typography>
+              <Typography variant="h6" fontWeight={700}>Información de Contacto</Typography>
               {!editing && (
-                <Button variant="outlined" startIcon={<EditIcon />} onClick={() => setEditing(true)}>
-                  Editar
+                <Button variant="contained" color="primary" startIcon={<EditIcon />} onClick={() => setEditing(true)} sx={{ borderRadius: 2 }}>
+                  Editar Perfil
                 </Button>
               )}
             </Box>
+            
+            <Divider sx={{ mb: 4 }} />
 
             <Box component="form" onSubmit={formik.handleSubmit}>
-              <Grid container spacing={2}>
+              <Grid container spacing={3}>
                 <Grid size={{ sm: 6, xs: 12 }}>
-                  <TextField fullWidth label="Teléfono" name="phone" value={formik.values.phone}
+                  <Typography variant="subtitle2" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>Teléfono Personal</Typography>
+                  <TextField fullWidth name="phone" value={formik.values.phone}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     error={formik.touched.phone && Boolean(formik.errors.phone)}
                     helperText={formik.touched.phone && formik.errors.phone}
                     disabled={!editing}
-                    InputProps={{ startAdornment: <PhoneIcon fontSize="small" sx={{ color: 'action.active', mr: 1 }} /> }} />
+                    placeholder="Ej. +502 1234 5678"
+                    InputProps={{ startAdornment: <PhoneIcon fontSize="small" sx={{ color: 'action.active', mr: 1.5 }} /> }} 
+                  />
                 </Grid>
+                
                 <Grid size={{ sm: 6, xs: 12 }}>
-                  <TextField fullWidth label="Sitio / Ubicación" name="site" value={formik.values.site}
+                  <Typography variant="subtitle2" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>Sede de Trabajo</Typography>
+                  <TextField fullWidth name="site" value={formik.values.site}
                     onChange={formik.handleChange} onBlur={formik.handleBlur}
                     error={formik.touched.site && Boolean(formik.errors.site)}
                     helperText={formik.touched.site && formik.errors.site}
                     disabled={!editing}
-                    InputProps={{ startAdornment: <BusinessIcon fontSize="small" sx={{ color: 'action.active', mr: 1 }} /> }} />
+                    placeholder="Ej. Edificio Central"
+                    InputProps={{ startAdornment: <BusinessIcon fontSize="small" sx={{ color: 'action.active', mr: 1.5 }} /> }} 
+                  />
                 </Grid>
-                <Grid size={{ sm: 6, xs: 12 }}>
-                  <TextField fullWidth label="Contacto de Emergencia" name="emergencyContact" value={formik.values.emergencyContact}
-                    onChange={formik.handleChange} onBlur={formik.handleBlur}
-                    error={formik.touched.emergencyContact && Boolean(formik.errors.emergencyContact)}
-                    helperText={formik.touched.emergencyContact && formik.errors.emergencyContact}
-                    disabled={!editing} />
+                
+                <Grid size={12}>
+                  <Box sx={{ bgcolor: 'background.default', p: 3, borderRadius: 2, mt: 1, border: '1px solid', borderColor: 'divider' }}>
+                    <Typography variant="subtitle1" fontWeight={700} sx={{ mb: 2 }}>En caso de emergencia</Typography>
+                    <Grid container spacing={3}>
+                      <Grid size={{ sm: 6, xs: 12 }}>
+                        <Typography variant="subtitle2" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>Nombre de Contacto</Typography>
+                        <TextField fullWidth name="emergencyContact" value={formik.values.emergencyContact}
+                          onChange={formik.handleChange} onBlur={formik.handleBlur}
+                          error={formik.touched.emergencyContact && Boolean(formik.errors.emergencyContact)}
+                          helperText={formik.touched.emergencyContact && formik.errors.emergencyContact}
+                          disabled={!editing} 
+                          placeholder="Nombre completo"
+                        />
+                      </Grid>
+                      <Grid size={{ sm: 6, xs: 12 }}>
+                        <Typography variant="subtitle2" fontWeight={600} sx={{ mb: 1, color: 'text.secondary' }}>Teléfono de Emergencia</Typography>
+                        <TextField fullWidth name="emergencyPhone" value={formik.values.emergencyPhone}
+                          onChange={formik.handleChange} onBlur={formik.handleBlur}
+                          error={formik.touched.emergencyPhone && Boolean(formik.errors.emergencyPhone)}
+                          helperText={formik.touched.emergencyPhone && formik.errors.emergencyPhone}
+                          disabled={!editing} 
+                          placeholder="Ej. +502 8765 4321"
+                        />
+                      </Grid>
+                    </Grid>
+                  </Box>
                 </Grid>
-                <Grid size={{ sm: 6, xs: 12 }}>
-                  <TextField fullWidth label="Teléfono de Emergencia" name="emergencyPhone" value={formik.values.emergencyPhone}
-                    onChange={formik.handleChange} onBlur={formik.handleBlur}
-                    error={formik.touched.emergencyPhone && Boolean(formik.errors.emergencyPhone)}
-                    helperText={formik.touched.emergencyPhone && formik.errors.emergencyPhone}
-                    disabled={!editing} />
-                </Grid>
+
                 {editing && (
                   <Grid size={12}>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      <Button variant="contained" startIcon={<SaveIcon />} onClick={formik.handleSubmit} disabled={formik.isSubmitting}>
-                        {formik.isSubmitting ? 'Guardando...' : 'Guardar'}
-                      </Button>
-                      <Button variant="outlined" startIcon={<CancelIcon />} onClick={handleCancel} disabled={formik.isSubmitting}>
+                    <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
+                      <Button variant="outlined" startIcon={<CancelIcon />} onClick={handleCancel} disabled={formik.isSubmitting} sx={{ borderRadius: 2 }}>
                         Cancelar
+                      </Button>
+                      <Button variant="contained" startIcon={<SaveIcon />} onClick={formik.handleSubmit} disabled={formik.isSubmitting} sx={{ borderRadius: 2, background: 'linear-gradient(135deg, #3B82F6, #2563EB)' }}>
+                        {formik.isSubmitting ? 'Guardando...' : 'Guardar Cambios'}
                       </Button>
                     </Box>
                   </Grid>
@@ -204,7 +286,6 @@ function Profile() {
           </Card>
         </Grid>
       </Grid>
-
     </Box>
   );
 }

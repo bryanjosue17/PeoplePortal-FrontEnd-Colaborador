@@ -53,18 +53,36 @@ export default function TeamRequests() {
 
   return (
     <Box>
-      <Box sx={{ alignItems: 'center', display: 'flex', gap: 1.5, mb: 1 }}>
+      {/* Glassmorphic Header Banner */}
+      <Paper
+        elevation={0}
+        sx={{
+          background: 'linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(139,92,246,0.06) 100%)',
+          backdropFilter: 'blur(16px)',
+          borderRadius: 3,
+          mb: 4,
+          p: { xs: 2.5, md: 3.5 },
+          position: 'relative',
+          overflow: 'hidden',
+          border: '1px solid',
+          borderColor: 'divider',
+          borderLeft: '5px solid #3B82F6',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative', zIndex: 1 }}>
+          <Box sx={{ p: 1.5, borderRadius: 2.5, background: 'linear-gradient(135deg, #3B82F6, #60A5FA)', color: '#fff', display: 'flex', boxShadow: '0 6px 16px rgba(59,130,246,0.3)' }}>
+            <GroupIcon fontSize="medium" />
+          </Box>
+          <Box>
+            <Typography variant="h4" fontWeight={800}>Mi Equipo</Typography>
+            <Typography variant="body2" color="text.secondary">Solicitudes pendientes y gestión de aprobaciones de tu equipo a cargo</Typography>
+          </Box>
+        </Box>
         <Box sx={{
-          alignItems: 'center', bgcolor: alpha('#60A5FA', 0.12), borderRadius: 2,
-          color: 'primary.main', display: 'flex', p: 1,
-        }}>
-          <GroupIcon />
-        </Box>
-        <Box>
-          <Typography variant="h5" fontWeight={700}>Mi Equipo</Typography>
-          <Typography variant="body2" color="text.secondary">Solicitudes pendientes de aprobación</Typography>
-        </Box>
-      </Box>
+          position: 'absolute', right: -40, top: -40, width: 220, height: 220, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(255,255,255,0) 70%)', zIndex: 0
+        }} />
+      </Paper>
 
       {pending.length > 0 && (
         <Alert severity="warning" sx={{ mb: 3 }}>
@@ -88,7 +106,14 @@ export default function TeamRequests() {
               <Typography variant="subtitle2" fontWeight={700} color="warning.main" sx={{ mb: 1 }}>
                 PENDIENTES DE REVISIÓN ({pending.length})
               </Typography>
-              <TableContainer component={Paper}>
+              <TableContainer component={Paper} elevation={0} sx={{
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 3,
+                overflowX: 'auto',
+              }}>
                 <Table size="small">
                   <TableHead>
                     <TableRow>
@@ -131,7 +156,14 @@ export default function TeamRequests() {
               <Typography variant="subtitle2" fontWeight={700} color="text.secondary" sx={{ mb: 1 }}>
                 HISTORIAL ({others.length})
               </Typography>
-              <TableContainer component={Paper}>
+              <TableContainer component={Paper} elevation={0} sx={{
+                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 3,
+                overflowX: 'auto',
+              }}>
                 <Table size="small">
                   <TableHead>
                     <TableRow>

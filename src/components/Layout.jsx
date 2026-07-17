@@ -18,7 +18,7 @@ import {
   IconButton, List, ListItem, ListItemButton, ListItemIcon,
   ListItemText, Menu, MenuItem, Toolbar, Typography
 } from '@mui/material';
-import { useKeycloak } from '@react-keycloak/web';
+import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -30,7 +30,6 @@ const drawerWidth = 260;
 
 const baseNavItems = [
   { icon: <DashboardIcon />, path: '/dashboard', text: 'Dashboard' },
-  { icon: <PersonIcon />, path: '/profile', text: 'Mi Perfil' },
   { icon: <DescriptionIcon />, path: '/documents', text: 'Mis Documentos' },
   { icon: <AssignmentIcon />, path: '/requests', text: 'Solicitudes' },
   { icon: <CampaignIcon />, path: '/announcements', text: 'Comunicados' },
@@ -39,7 +38,7 @@ const baseNavItems = [
 ];
 
 function Layout({ children }) {
-  const { keycloak } = useKeycloak();
+  const { user: tokenParsed, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -50,7 +49,7 @@ function Layout({ children }) {
   const { unreadCount, clearUnread } = useNotifications();
 
   // Detect jefe_inmediato role
-  const roles = keycloak?.tokenParsed?.realm_access?.roles || [];
+  const roles = tokenParsed?.realm_access?.roles || [];
   const isManager = roles.includes('jefe_inmediato');
 
   const navItems = [
@@ -63,7 +62,7 @@ function Layout({ children }) {
   const handleMenuClose = () => setAnchorEl(null);
   const handleLogout = () => {
     handleMenuClose();
-    keycloak.logout();
+    logout();
   };
 
   const handleThemeMenuOpen = (e) => setThemeAnchorEl(e.currentTarget);
@@ -79,9 +78,8 @@ function Layout({ children }) {
     return <SettingsBrightnessIcon />;
   };
 
-  const token = keycloak?.tokenParsed;
-  const userName = token?.name || token?.preferred_username || 'Usuario';
-  const userEmail = token?.email || '';
+  const userName = tokenParsed?.name || tokenParsed?.preferred_username || 'Usuario';
+  const userEmail = tokenParsed?.email || '';
   const userAvatar = userName.charAt(0).toUpperCase();
 
   const drawer = (
@@ -119,8 +117,27 @@ function Layout({ children }) {
             <ListItemButton
               selected={location.pathname === item.path}
               onClick={() => { navigate(item.path); setMobileOpen(false); }}
+              sx={{
+                borderRadius: 2,
+                mx: 1.5,
+                mb: 0.5,
+                transition: 'all 0.2s',
+                '&.Mui-selected': {
+                  background: 'linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.15))',
+                  borderLeft: '4px solid #3B82F6',
+                  color: 'primary.main',
+                  fontWeight: 700,
+                  '&:hover': {
+                    background: 'linear-gradient(135deg, rgba(59,130,246,0.25), rgba(139,92,246,0.2))',
+                  }
+                },
+                '&:hover': {
+                  background: 'rgba(59,130,246,0.08)',
+                  transform: 'translateX(3px)',
+                }
+              }}
             >
-              <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
+              <ListItemIcon sx={{ minWidth: 40, color: location.pathname === item.path ? 'primary.main' : 'inherit' }}>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
           </ListItem>
@@ -133,9 +150,18 @@ function Layout({ children }) {
     <Box sx={{ display: 'flex' }}>
       <AppBar
         position="fixed"
+        elevation={0}
         sx={{
           ml: { md: `${drawerWidth}px` },
           width: { md: `calc(100% - ${drawerWidth}px)` },
+          background: (theme) => theme.palette.mode === 'dark'
+            ? 'linear-gradient(135deg, rgba(15,23,42,0.85) 0%, rgba(30,41,59,0.75) 100%)'
+            : 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.8) 100%)',
+          backdropFilter: 'blur(16px)',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          color: 'text.primary',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
         }}
       >
         <Toolbar>
@@ -203,6 +229,9 @@ function Layout({ children }) {
                 <Typography variant="body2" color="text.secondary">{userEmail}</Typography>
               </MenuItem>
               <Divider />
+              <MenuItem onClick={() => { handleMenuClose(); navigate('/profile'); }}>
+                <PersonIcon fontSize="small" sx={{ mr: 1 }} /> Mi Perfil
+              </MenuItem>
               <MenuItem onClick={handleLogout}>
                 <LogoutIcon fontSize="small" sx={{ mr: 1 }} /> Cerrar Sesión
               </MenuItem>
@@ -221,7 +250,16 @@ function Layout({ children }) {
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
           sx={{
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              background: (theme) => theme.palette.mode === 'dark'
+                ? 'linear-gradient(180deg, rgba(15,23,42,0.92) 0%, rgba(30,41,59,0.85) 100%)'
+                : 'linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(248,250,252,0.85) 100%)',
+              backdropFilter: 'blur(16px)',
+              borderRight: '1px solid',
+              borderColor: 'divider',
+            },
             display: { md: 'none', xs: 'block' },
           }}
         >
@@ -230,7 +268,16 @@ function Layout({ children }) {
         <Drawer
           variant="permanent"
           sx={{
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+            '& .MuiDrawer-paper': { 
+              boxSizing: 'border-box', 
+              width: drawerWidth,
+              background: (theme) => theme.palette.mode === 'dark'
+                ? 'linear-gradient(180deg, rgba(15,23,42,0.92) 0%, rgba(30,41,59,0.85) 100%)'
+                : 'linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(248,250,252,0.85) 100%)',
+              backdropFilter: 'blur(16px)',
+              borderRight: '1px solid',
+              borderColor: 'divider',
+            },
             display: { md: 'block', xs: 'none' },
           }}
           open
