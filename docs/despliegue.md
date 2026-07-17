@@ -70,24 +70,37 @@ Las llamadas a `/api/` son redirigidas internamente al servicio del backend dent
 
 ## Kubernetes
 
-Manifiesto: `k8s/frontend-colaborador.yaml`
+Manifiesto: `k8s/overlays/{environment}/kustomization.yaml`
 
 ```bash
-kubectl apply -f k8s/frontend-colaborador.yaml
-kubectl rollout status deployment/frontend-colaborador -n peopleportal
+# Desarrollo (Docker Desktop local) — imagen :develop
+kubectl apply -k k8s/overlays/develop/
+kubectl rollout restart deployment/frontend-colaborador -n peopleportal
+
+# Producción — imagen :main
+kubectl apply -k k8s/overlays/production/
+kubectl rollout restart deployment/frontend-colaborador -n peopleportal
 ```
 
-| Parámetro | Valor |
-|---|---|
-| Imagen | `ghcr.io/bryanjosue17/peopleportal-frontend-colaborador:main` |
-| ImagePullPolicy | `Always` (tira de GHCR en cada nuevo pod) |
-| imagePullSecrets | `ghcr-secret` (creado por el script de deploy) |
-| Service type | `NodePort` |
-| Puerto externo | `30081` |
-| URL de acceso | `http://localhost:30081` |
+| Parámetro | develop | production |
+|---|---|---|
+| Imagen | `ghcr.io/bryanjosue17/peopleportal-frontend-colaborador:develop` | `:main` |
+| imagePullPolicy | `Always` | `Always` |
+| imagePullSecrets | `ghcr-secret` | `ghcr-secret` |
+| Service type | `NodePort` | `NodePort` |
+| Puerto externo | `30081` | `30081` |
 
-> El script `deploy/deploy.ps1` crea/renueva automáticamente el Secret `ghcr-secret`
-> con el token de `gh auth token` al desplegar.
+**Estructura Kustomize:**
+```
+k8s/
+├── base/              # Deployment + Service base (imagen por defecto :develop)
+│   ├── kustomization.yaml
+│   ├── deployment.yaml
+│   └── service.yaml
+└── overlays/
+    ├── develop/           # Parcha imagen a :develop
+    └── production/        # Parcha imagen a :main
+```
 
 ---
 
