@@ -79,11 +79,15 @@ kubectl rollout status deployment/frontend-colaborador -n peopleportal
 
 | Parámetro | Valor |
 |---|---|
-| Imagen | `peopleportal-frontend-colaborador:latest` |
-| ImagePullPolicy | `Never` (imagen local Docker Desktop) |
+| Imagen | `ghcr.io/bryanjosue17/peopleportal-frontend-colaborador:main` |
+| ImagePullPolicy | `Always` (tira de GHCR en cada nuevo pod) |
+| imagePullSecrets | `ghcr-secret` (creado por el script de deploy) |
 | Service type | `NodePort` |
 | Puerto externo | `30081` |
 | URL de acceso | `http://localhost:30081` |
+
+> El script `deploy/deploy.ps1` crea/renueva automáticamente el Secret `ghcr-secret`
+> con el token de `gh auth token` al desplegar.
 
 ---
 
@@ -94,6 +98,6 @@ Pipeline: `.github/workflows/ci.yml`
 | Job | Acciones |
 |---|---|
 | `build-test` | `npm ci` → `oxlint` → `npm run test:coverage` (Codacy) → `npm run build` |
-| `docker` | `docker build` → push a GHCR (`peopleportal-frontend-colaborador`) |
+| `docker` | `docker build` → push a GHCR (`ghcr.io/bryanjosue17/peopleportal-frontend-colaborador`) |
 
-Tags: `{branch}-{short-sha}` y `latest` en `main`.
+Tags: `{branch}` y `{short-sha}` (7 chars del commit SHA).
