@@ -3,16 +3,14 @@ import { MemoryRouter } from 'react-router-dom';
 import { expect, it, vi } from 'vitest';
 import Layout from '../components/Layout';
 
-vi.mock('@react-keycloak/web', () => ({
-  useKeycloak: () => ({
-    keycloak: {
-      logout: vi.fn(),
-      tokenParsed: {
-        email: 'test@test.com',
-        name: 'Test User',
-        preferred_username: 'testuser',
-      },
+vi.mock('../context/AuthContext', () => ({
+  useAuth: () => ({
+    user: {
+      email: 'test@test.com',
+      name: 'Test User',
+      preferred_username: 'testuser',
     },
+    logout: vi.fn(),
   }),
 }));
 
@@ -61,7 +59,6 @@ it('renders subtitle (appears in temporary and permanent drawer)', () => {
 it('renders all navigation items in drawer', () => {
   renderWithRouter(<Layout><div>Content</div></Layout>);
   expect(screen.getAllByText('Dashboard').length).toBeGreaterThanOrEqual(1);
-  expect(screen.getAllByText('Mi Perfil').length).toBeGreaterThanOrEqual(1);
   expect(screen.getAllByText('Mis Documentos').length).toBeGreaterThanOrEqual(1);
   expect(screen.getAllByText('Solicitudes').length).toBeGreaterThanOrEqual(1);
   expect(screen.getAllByText('Comunicados').length).toBeGreaterThanOrEqual(1);

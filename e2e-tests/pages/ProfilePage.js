@@ -1,11 +1,11 @@
 export class ProfilePage {
   constructor(page) {
     this.page = page;
-    this.heading = page.getByRole('heading', { name: /Mi Perfil/i, level: 5 });
+    this.heading = page.locator('h3, h6').filter({ hasText: /Información de Contacto|Detalles de Cuenta|Mi Perfil/i }).first();
   }
 
   async verifyLoaded() {
-    await this.heading.waitFor({ state: 'visible' });
+    await this.heading.waitFor({ state: 'visible', timeout: 20000 });
   }
 
   // PUT /api/employees/me

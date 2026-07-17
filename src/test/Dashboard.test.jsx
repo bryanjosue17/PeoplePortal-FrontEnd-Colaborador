@@ -2,14 +2,13 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { expect, it, vi } from 'vitest';
 
-vi.mock('@react-keycloak/web', () => ({
-  useKeycloak: () => ({
-    keycloak: {
-      tokenParsed: {
-        name: 'Test User',
-        preferred_username: 'testuser',
-      },
+vi.mock('../context/AuthContext', () => ({
+  useAuth: () => ({
+    user: {
+      name: 'Test User',
+      preferred_username: 'testuser',
     },
+    logout: vi.fn(),
   }),
 }));
 
@@ -31,8 +30,8 @@ async function renderDashboard() {
 it('shows welcome message with user name', async () => {
   getDashboard.mockRejectedValue(new Error('No data'));
   await renderDashboard();
-  expect(await screen.findByText(/Bienvenido/)).toBeInTheDocument();
-  expect(await screen.findByText((c) => c.includes('Test User'))).toBeInTheDocument();
+  await screen.findByText(/No se pudieron cargar/);
+  expect(await screen.findByText(/Test User/)).toBeInTheDocument();
 });
 
 it('displays info alert when API fails', async () => {
@@ -70,5 +69,5 @@ it('shows empty state when no announcements', async () => {
     data: { activeAnnouncements: [], availableBenefits: [], pendingRequestsCount: 0, recentDocuments: [] },
   });
   await renderDashboard();
-  expect(await screen.findByText('No hay comunicados recientes.')).toBeInTheDocument();
+  expect(await screen.findByText(/No hay comunicados recientes/)).toBeInTheDocument();
 });

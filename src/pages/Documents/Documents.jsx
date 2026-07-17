@@ -80,29 +80,65 @@ function Documents() {
 
   return (
     <Box>
-      <Box sx={{ alignItems: 'center', display: 'flex', gap: 1, mb: 3 }}>
-        <DescriptionIcon color="primary" />
-        <Typography variant="h5" fontWeight={600}>Mis Documentos</Typography>
-      </Box>
+      {/* Glassmorphic Header Banner */}
+      <Paper
+        elevation={0}
+        sx={{
+          background: 'linear-gradient(135deg, rgba(59,130,246,0.12) 0%, rgba(139,92,246,0.06) 100%)',
+          backdropFilter: 'blur(16px)',
+          borderRadius: 3,
+          mb: 4,
+          p: { xs: 2.5, md: 3.5 },
+          position: 'relative',
+          overflow: 'hidden',
+          border: '1px solid',
+          borderColor: 'divider',
+          borderLeft: '5px solid #3B82F6',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative', zIndex: 1 }}>
+          <Box sx={{ p: 1.5, borderRadius: 2.5, background: 'linear-gradient(135deg, #3B82F6, #60A5FA)', color: '#fff', display: 'flex', boxShadow: '0 6px 16px rgba(59,130,246,0.3)' }}>
+            <DescriptionIcon fontSize="medium" />
+          </Box>
+          <Box>
+            <Typography variant="h4" fontWeight={800}>Mis Documentos</Typography>
+            <Typography variant="body2" color="text.secondary">Consulta y descarga tus constancias, manuales y archivos personales</Typography>
+          </Box>
+        </Box>
+        <Box sx={{
+          position: 'absolute', right: -40, top: -40, width: 220, height: 220, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(59,130,246,0.15) 0%, rgba(255,255,255,0) 70%)', zIndex: 0
+        }} />
+      </Paper>
 
-      <Box sx={{ mb: 2 }}>
+      <Paper
+        elevation={0}
+        sx={{
+          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 3,
+          p: 2.5,
+          mb: 3,
+        }}
+      >
         <TextField
           fullWidth size="small" placeholder="Buscar por nombre o tipo..."
           value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
-          slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: 'text.disabled' }} /></InputAdornment> } }}
+          slotProps={{ input: { startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: 'primary.main' }} /></InputAdornment> } }}
+          sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
         />
-      </Box>
+      </Paper>
 
-      {filtered.length === 0 ? (
-        <Card>
-          <CardContent sx={{ py: 6, textAlign: 'center' }}>
-            <DescriptionIcon sx={{ color: 'text.disabled', fontSize: 48, mb: 2 }} />
-            <Typography color="text.secondary">{search ? 'No se encontraron documentos con ese criterio.' : 'No tienes documentos disponibles.'}</Typography>
-          </CardContent>
-        </Card>
-      ) : (
-        <>
-          <TableContainer component={Paper} sx={{ borderRadius: 3, overflowX: 'auto' }}>
+      <TableContainer component={Paper} elevation={0} sx={{
+        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%)',
+        backdropFilter: 'blur(12px)',
+        border: '1px solid',
+        borderColor: 'divider',
+        borderRadius: 3,
+        overflowX: 'auto',
+      }}>
           <Table>
             <TableHead>
               <TableRow>
@@ -113,31 +149,41 @@ function Documents() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {paginated.map((doc) => (
-                <TableRow key={doc.id} hover>
-                  <TableCell>{doc.name || doc.fileName || 'Sin nombre'}</TableCell>
-                  <TableCell>
-                    <Chip label={doc.type || doc.documentType || 'General'} size="small" variant="outlined" />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={statusLabels[doc.status] ?? (doc.status || 'Pendiente')}
-                      size="small"
-                      color={statusColors[doc.status] || 'default'}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Typography variant="body2" color="text.secondary">
-                      {doc.uploadedAt || doc.createdAt
-                        ? new Date(doc.uploadedAt || doc.createdAt).toLocaleDateString()
-                        : '-'}
-                    </Typography>
+              {filtered.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} align="center" sx={{ py: 6 }}>
+                    <DescriptionIcon sx={{ color: 'text.disabled', fontSize: 48, mb: 2 }} />
+                    <Typography color="text.secondary">{search ? 'No se encontraron documentos con ese criterio.' : 'No tienes documentos disponibles.'}</Typography>
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                paginated.map((doc) => (
+                  <TableRow key={doc.id} hover>
+                    <TableCell>{doc.name || doc.fileName || 'Sin nombre'}</TableCell>
+                    <TableCell>
+                      <Chip label={doc.type || doc.documentType || 'General'} size="small" variant="outlined" />
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={statusLabels[doc.status] ?? (doc.status || 'Pendiente')}
+                        size="small"
+                        color={statusColors[doc.status] || 'default'}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" color="text.secondary">
+                        {doc.uploadedAt || doc.createdAt
+                          ? new Date(doc.uploadedAt || doc.createdAt).toLocaleDateString()
+                          : '-'}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
+        
         {filtered.length > rowsPerPage && (
           <TablePagination
             component="div"
@@ -150,8 +196,6 @@ function Documents() {
             labelRowsPerPage="Por página:"
           />
         )}
-        </>
-      )}
     </Box>
   );
 }
