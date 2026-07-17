@@ -74,7 +74,7 @@ Manifiesto: `k8s/frontend-colaborador.yaml`
 
 ```bash
 kubectl apply -f k8s/frontend-colaborador.yaml
-kubectl rollout status deployment/peopleportal-frontend-colaborador -n peopleportal
+kubectl rollout status deployment/frontend-colaborador -n peopleportal
 ```
 
 | Parámetro | Valor |
