@@ -45,11 +45,11 @@ Base URL: configurada por `VITE_API_URL` (vacío = misma origin).
 
 ---
 
-## Vouchers de pago
+## Nómina
 
 | Método | Ruta | Página | Descripción |
 |---|---|---|---|
-| `GET` | `/api/vouchers/me` | (dashboard) | Consultar mis vouchers de pago cargados por nómina |
+| `GET` | `/api/nomina/me` | Nomina | Consultar mis comprobantes de nómina (vouchers de pago) |
 
 ---
 
