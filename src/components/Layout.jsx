@@ -1,4 +1,4 @@
-import AssignmentIcon from '@mui/icons-material/Assignment';
+import DiceAvatar from './DiceAvatar';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import CampaignIcon from '@mui/icons-material/Campaign';
@@ -13,7 +13,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness';
 import {
-  AppBar, Avatar, Badge, Box,
+  AppBar, Badge, Box,
   Divider, Drawer,
   IconButton, List, ListItem, ListItemButton, ListItemIcon,
   ListItemText, Menu, MenuItem, Toolbar, Typography
@@ -80,7 +80,6 @@ function Layout({ children }) {
 
   const userName = tokenParsed?.name || tokenParsed?.preferred_username || 'Usuario';
   const userEmail = tokenParsed?.email || '';
-  const userAvatar = userName.charAt(0).toUpperCase();
 
   const drawer = (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -212,12 +211,12 @@ function Layout({ children }) {
             <Typography variant="body2" sx={{ display: { sm: 'block', xs: 'none' } }}>
               {userName}
             </Typography>
-            <Avatar
+            <DiceAvatar
+              seed={userEmail || userName}
+              size={36}
+              sx={{ cursor: 'pointer' }}
               onClick={handleMenuOpen}
-              sx={{ bgcolor: 'primary.main', cursor: 'pointer', fontSize: 16, height: 36, width: 36 }}
-            >
-              {userAvatar}
-            </Avatar>
+            />
             <Menu
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
