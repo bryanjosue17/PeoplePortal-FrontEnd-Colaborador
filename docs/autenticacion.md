@@ -1,35 +1,38 @@
 # Autenticación — FrontEnd Colaborador
 
-## Flujo Keycloak PKCE S256
+## Mecanismo: ROPC directo a Keycloak (sin redirección)
+
+El portal utiliza un formulario de login propio (React) que llama directamente al endpoint de token de Keycloak con el flujo **Resource Owner Password Credentials (ROPC)**. No se utiliza redirección PKCE ni `@react-keycloak/web`.
 
 ```mermaid
 sequenceDiagram
     participant U as Usuario (Browser)
-    participant App as React App
-    participant KC as Keycloak
+    participant Login as LoginPage (React)
+    participant Auth as AuthContext
+    participant KC as Keycloak Token Endpoint
 
-    U->>App: Accede a localhost:30081
-    App->>App: ReactKeycloakProvider init
-    App->>KC: Redirect → /realms/peopleportal/protocol/openid-connect/auth
-    Note right of KC: PKCE: code_challenge (S256)
-    KC->>U: Pantalla de login
-    U->>KC: Credenciales
-    KC->>App: Redirect con code
-    App->>KC: POST token endpoint (code + code_verifier)
-    KC-->>App: access_token + refresh_token
-    App->>App: Guardar token en sessionStorage
-    App->>App: Render de la aplicación
+    U->>Login: Introduce usuario y contraseña
+    Login->>Auth: auth.login(username, password)
+    Auth->>KC: POST /realms/peopleportal/protocol/openid-connect/token
+    Note right of KC: grant_type=password<br/>client_id=peopleportal-frontend<br/>username + password
+    KC-->>Auth: { access_token, refresh_token, expires_in }
+    Auth->>Auth: applyTokensToKeycloak(tokenData)
+    Note right of Auth: Guarda tokens en sessionStorage<br/>Actualiza objeto keycloak.token
+    Auth->>U: isAuthenticated = true → App renderiza
 ```
 
 ---
 
-## Configuración Keycloak (`keycloak.js`)
+## Configuración `keycloak.js`
+
+`keycloak.js` crea un objeto `Keycloak` como **proxy de token** para el interceptor Axios. **No se llama a `keycloak.init()`** — los tokens se inyectan manualmente desde `AuthContext`.
 
 ```js
+// src/keycloak.js
 import Keycloak from 'keycloak-js';
 
 const keycloak = new Keycloak({
-  url:      import.meta.env.VITE_KEYCLOAK_URL || 'http://localhost:8080',
+  url:      import.meta.env.VITE_KEYCLOAK_URL || 'http://localhost:30080',
   realm:    'peopleportal',
   clientId: 'peopleportal-frontend',
 });
@@ -42,21 +45,20 @@ export default keycloak;
 ## Inicialización en `App.jsx`
 
 ```jsx
-<ReactKeycloakProvider
-  authClient={keycloak}
-  initOptions={{
-    onLoad: 'login-required',
-    pkceMethod: 'S256',
-    checkLoginIframe: false,
-  }}
->
-  <App />
-</ReactKeycloakProvider>
-```
+// src/App.jsx — No usa ReactKeycloakProvider
+import { AuthProvider, useAuth } from './context/AuthContext';
 
-- `login-required`: redirige a Keycloak si no hay sesión activa.
-- `pkceMethod: 'S256'`: habilita PKCE con SHA-256.
-- `checkLoginIframe: false`: evita conflictos de CSP con el iframe de sesión.
+function AppInner() {
+  const { isAuthenticated, loading } = useAuth();
+  if (loading) return null;
+  if (!isAuthenticated) return <LoginPage />;
+  return <Layout>...</Layout>;
+}
+
+export default function App() {
+  return <AuthProvider><AppInner /></AuthProvider>;
+}
+```
 
 ---
 
@@ -67,22 +69,15 @@ export default keycloak;
 import axios from 'axios';
 import keycloak from '../keycloak';
 
-const client = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '',
-});
+const client = axios.create({ baseURL: import.meta.env.VITE_API_URL || '' });
 
 client.interceptors.request.use((config) => {
-  const token = keycloak.token;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  if (keycloak.token) config.headers.Authorization = `Bearer ${keycloak.token}`;
   return config;
 });
 
 export default client;
 ```
-
-Todos los requests a `/api/` incluyen automáticamente el JWT en el header `Authorization`.
 
 ---
 
@@ -90,13 +85,30 @@ Todos los requests a `/api/` incluyen automáticamente el JWT en el header `Auth
 
 | Item | Valor |
 |---|---|
-| Clave en sessionStorage | `keycloak-token` |
+| Clave access_token | `pp-colab-token` (sessionStorage) |
+| Clave refresh_token | `pp-colab-refresh` (sessionStorage) |
 | Scope | Session (se limpia al cerrar pestaña) |
-| Refresh | Manejado automáticamente por `keycloak-js` |
+| Refresh automático | `AuthContext` refresca antes de que expire |
 
 ---
 
 ## Logout
+
+```js
+auth.logout(); // Limpia sessionStorage y redirige al login
+```
+
+---
+
+## Realm y client de Keycloak
+
+| Parámetro | Valor |
+|---|---|
+| Realm | `peopleportal` |
+| Client ID | `peopleportal-frontend` |
+| Client type | Public (sin secret) |
+| Grant type | **Resource Owner Password Credentials (ROPC)** |
+| Rol requerido | `employee` (o `jefe_inmediato` para Mi Equipo) |
 
 ```js
 keycloak.logout({ redirectUri: window.location.origin });
