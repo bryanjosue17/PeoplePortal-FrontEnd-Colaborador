@@ -1,10 +1,9 @@
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import CampaignIcon from '@mui/icons-material/Campaign';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import DescriptionIcon from '@mui/icons-material/Description';
 import SecurityIcon from '@mui/icons-material/Security';
 import { Alert, Box, Card, CardContent, Chip, Grid, Paper, Skeleton, Typography } from '@mui/material';
-import { alpha, useTheme } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
 import { useAuth } from '../../context/AuthContext';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +13,7 @@ import DiceAvatar from '../../components/DiceAvatar';
 function StatCard({ icon, title, value, color, onClick }) {
   return (
     <Card onClick={onClick} sx={{
-      cursor: onClick ? 'pointer' : 'default',{
+      cursor: onClick ? 'pointer' : 'default',
       background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%)',
       backdropFilter: 'blur(12px)',
       border: '1px solid',
