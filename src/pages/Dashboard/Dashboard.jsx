@@ -7,12 +7,14 @@ import { Alert, Box, Card, CardContent, Chip, Grid, Paper, Skeleton, Typography 
 import { alpha, useTheme } from '@mui/material/styles';
 import { useAuth } from '../../context/AuthContext';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getDashboard } from '../../api/dashboard';
 import DiceAvatar from '../../components/DiceAvatar';
 
-function StatCard({ icon, title, value, color }) {
+function StatCard({ icon, title, value, color, onClick }) {
   return (
-    <Card sx={{
+    <Card onClick={onClick} sx={{
+      cursor: onClick ? 'pointer' : 'default',{
       background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.01) 100%)',
       backdropFilter: 'blur(12px)',
       border: '1px solid',
@@ -52,6 +54,7 @@ function StatCard({ icon, title, value, color }) {
 
 function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -176,6 +179,7 @@ function Dashboard() {
               title="Solicitudes Pendientes"
               value={data?.pendingRequestsCount ?? 0}
               color="#ed6c02"
+              onClick={() => navigate('/requests')}
             />
           )}
         </Grid>
@@ -188,6 +192,7 @@ function Dashboard() {
               title="Documentos Disponibles"
               value={data?.recentDocuments?.length ?? 0}
               color="#1565c0"
+              onClick={() => navigate('/documents')}
             />
           )}
         </Grid>
@@ -200,6 +205,7 @@ function Dashboard() {
               title="Comunicados Activos"
               value={data?.activeAnnouncements?.length ?? 0}
               color="#7b1fa2"
+              onClick={() => navigate('/announcements')}
             />
           )}
         </Grid>
